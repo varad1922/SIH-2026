@@ -4,15 +4,23 @@ import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);
+  const [token, setToken] = useState(
+    localStorage.getItem('token') || null
+  );
   const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${token}`;
+
       fetchUser();
     } else {
       setLoading(false);
@@ -21,10 +29,13 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/auth/me');
+      const res = await axios.get(
+        `${API_URL}/auth/me`
+      );
+
       setUser(res.data);
     } catch (error) {
-      console.error("Auth fetch error", error);
+      console.error('Auth fetch error', error);
       logout();
     } finally {
       setLoading(false);
@@ -32,39 +43,78 @@ export const AuthProvider = ({ children }) => {
   };
 
   const login = async (email, password) => {
-    const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+    const res = await axios.post(
+      `${API_URL}/auth/login`,
+      { email, password }
+    );
+
     localStorage.setItem('token', res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
+
     navigate('/');
   };
 
   const register = async (userData) => {
-    const res = await axios.post('http://localhost:5000/api/auth/register', userData);
+    const res = await axios.post(
+      `${API_URL}/auth/register`,
+      userData
+    );
+
     localStorage.setItem('token', res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
+
     navigate('/');
   };
 
   const loginWithGoogle = async (googleToken) => {
-    const res = await axios.post('http://localhost:5000/api/auth/google', { token: googleToken });
-    localStorage.setItem('token', res.data.token);
-    setToken(res.data.token);
-    setUser(res.data.user);
-    navigate('/');
+    try {
+      const res = await axios.post(
+        `${API_URL}/auth/google`,
+        { token: googleToken }
+      );
+
+      localStorage.setItem('token', res.data.token);
+      setToken(res.data.token);
+      setUser(res.data.user);
+
+      navigate('/');
+    } catch (error) {
+      console.error(
+        'Google login backend error:',
+        error.response?.data || error.message
+      );
+
+      throw error;
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+
     setToken(null);
     setUser(null);
-    delete axios.defaults.headers.common['Authorization'];
+
+    delete axios.defaults.headers.common[
+      'Authorization'
+    ];
+
     navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, loginWithGoogle, logout, loading }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        login,
+        register,
+        loginWithGoogle,
+        logout,
+        loading
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
