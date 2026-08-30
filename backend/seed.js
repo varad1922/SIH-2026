@@ -1,4 +1,4 @@
-require('dotenv').config();
+grequire('dotenv').config();
 const mongoose = require('mongoose');
 const Course = require('./models/Course');
 

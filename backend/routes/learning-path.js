@@ -117,8 +117,8 @@ router.get('/:pathId', protect, async (req, res) => {
       };
     });
 
-    // Calculate overall progress percentage based on completed/reviewed modules
-    const completedCount = modulesWithProgress.filter(m => m.status === 'Completed' || m.status === 'Reviewed').length;
+    // Calculate overall progress percentage based on completed modules
+    const completedCount = modulesWithProgress.filter(m => m.status === 'Completed').length;
     const overallProgress = Math.round((completedCount / path.modules.length) * 100);
 
     res.json({
@@ -172,7 +172,7 @@ router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
     const { pathId, moduleId } = req.params;
     const { status } = req.body;
 
-    if (!['Not Started', 'In Progress', 'Completed', 'Reviewed'].includes(status)) {
+    if (!['Not Started', 'In Progress', 'Completed'].includes(status)) {
       return res.status(400).json({ message: 'Invalid status provided.' });
     }
 
@@ -222,7 +222,6 @@ router.post('/:pathId/modules/:moduleId/lessons/:lessonId/complete', protect, as
     // Check if all lessons are completed
     const moduleData = mockModulesData[moduleId];
     if (moduleData && progress.completedLessons.length >= moduleData.lessons.length) {
-      // Don't auto-downgrade a Reviewed module, but if it was In Progress, mark Completed
       if (progress.status === 'In Progress' || progress.status === 'Not Started') {
         progress.status = 'Completed';
       }

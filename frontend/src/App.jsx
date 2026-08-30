@@ -11,6 +11,7 @@ import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
+import Profile from './pages/Profile';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -51,6 +52,7 @@ function App() {
             <Route path="learning" element={<Learning />} />
             <Route path="learning/:learningPathId" element={<LearningPathDetail />} />
             <Route path="analytics" element={<Analytics />} />
+            <Route path="profile" element={<Profile />} />
           </Route>
 
           {/* Full-screen learning workspace: intentionally outside DashboardLayout */}

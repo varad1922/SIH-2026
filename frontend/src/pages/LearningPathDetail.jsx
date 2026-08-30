@@ -7,7 +7,6 @@ import {
   CheckCircle,
   Lock,
   PlayCircle,
-  RotateCcw,
   AlertTriangle,
   Clock,
 } from 'lucide-react';
@@ -107,36 +106,10 @@ const LearningPathDetail = () => {
   const reviewModule = async (moduleId) => {
     try {
       setUpdating(true);
-      await api.post(
-        `/learning-path/${learningPathId}/modules/${moduleId}/status`,
-        { status: 'Reviewed' }
-      );
       await openModule(moduleId, true);
     } catch (err) {
       console.error('Error opening review material:', err);
       setError(err.response?.data?.message || 'Failed to open review material.');
-      setUpdating(false);
-    }
-  };
-
-  const markAsUnreviewed = async (moduleId) => {
-    const confirmed = window.confirm(
-      'Mark this module as unreviewed? Your completed lessons and learning progress will be preserved.'
-    );
-
-    if (!confirmed) return;
-
-    try {
-      setUpdating(true);
-      await api.post(
-        `/learning-path/${learningPathId}/modules/${moduleId}/status`,
-        { status: 'Completed' }
-      );
-      await fetchPathDetails();
-    } catch (err) {
-      console.error('Error marking module as unreviewed:', err);
-      setError(err.response?.data?.message || 'Failed to update review status.');
-    } finally {
       setUpdating(false);
     }
   };
@@ -207,7 +180,7 @@ const LearningPathDetail = () => {
         </div>
 
         {path.modules.map((mod, idx) => {
-          const completed = mod.status === 'Completed' || mod.status === 'Reviewed';
+          const completed = mod.status === 'Completed';
 
           return (
             <div
@@ -276,24 +249,6 @@ const LearningPathDetail = () => {
                   </button>
                 )}
 
-                {mod.status === 'Reviewed' && (
-                  <>
-                    <button
-                      onClick={() => openModule(mod.id, true)}
-                      disabled={updating}
-                      className="px-5 py-2.5 text-sm font-bold text-success-700 bg-success-100 rounded-lg border border-success-200 hover:bg-success-200 disabled:opacity-50"
-                    >
-                      Review Material
-                    </button>
-                    <button
-                      onClick={() => markAsUnreviewed(mod.id)}
-                      disabled={updating}
-                      className="px-5 py-2.5 text-sm font-bold text-text-secondary bg-card-bg rounded-lg border border-border-main hover:bg-card-alt disabled:opacity-50 flex items-center"
-                    >
-                      <RotateCcw className="w-4 h-4 mr-2" /> Mark as Unreviewed
-                    </button>
-                  </>
-                )}
 
                 {mod.status === 'Locked' && (
                   <button disabled className="px-5 py-2.5 text-sm font-bold text-text-secondary bg-card-alt rounded-lg border border-border-main cursor-not-allowed">
