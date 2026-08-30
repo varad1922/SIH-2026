@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import AiAssistant from './pages/AiAssistant';
 import Assessment from './pages/Assessment';
 import Learning from './pages/Learning';
+import LearningPathDetail from './pages/LearningPathDetail';
 import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -32,6 +33,7 @@ function App() {
             <Route path="chat" element={<AiAssistant />} />
             <Route path="assessment" element={<Assessment />} />
             <Route path="learning" element={<Learning />} />
+            <Route path="learning/:id" element={<LearningPathDetail />} />
             <Route path="analytics" element={<Analytics />} />
             <Route path="*" element={<div className="text-center mt-20 text-gray-500">Feature coming soon in this prototype...</div>} />
           </Route>

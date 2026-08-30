@@ -1,46 +1,46 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary-50: #fef3c7;
-  --color-primary-100: #fde68a;
-  --color-primary-200: #fcd34d;
-  --color-primary-300: #fbbf24;
-  --color-primary-400: #f59e0b;
-  --color-primary-500: #d97706;
-  --color-primary-600: #b45309; 
-  --color-primary-700: #92400e; 
-  --color-primary-800: #78350f; /* Primary (Woody Brown) */
-  --color-primary-900: #451a03;
+  --color-primary-50: #eaddd7;
+  --color-primary-100: #d6bba8;
+  --color-primary-200: #c19a80;
+  --color-primary-300: #ab795a;
+  --color-primary-400: #965a36;
+  --color-primary-500: #6B3E2E; /* Secondary Brown mapped here for some hover states */
+  --color-primary-600: #4A2C1D; /* Primary Dark Brown */
+  --color-primary-700: #3a2216; 
+  --color-primary-800: #2a180f; 
+  --color-primary-900: #190e09;
   
-  --color-secondary-50: #ecfdf5;
-  --color-secondary-100: #d1fae5;
-  --color-secondary-200: #a7f3d0;
-  --color-secondary-300: #6ee7b7;
-  --color-secondary-400: #34d399;
-  --color-secondary-500: #10b981;
-  --color-secondary-600: #059669; 
-  --color-secondary-700: #047857;
-  --color-secondary-800: #065f46;
-  --color-secondary-900: #064e3b; /* Secondary (Library Green) */
+  --color-secondary-50: #f5f0ec;
+  --color-secondary-100: #ebe1d9;
+  --color-secondary-200: #d8c4b6;
+  --color-secondary-300: #c3a491;
+  --color-secondary-400: #ae866d;
+  --color-secondary-500: #966749;
+  --color-secondary-600: #6B3E2E; /* Secondary Brown */
+  --color-secondary-700: #573124;
+  --color-secondary-800: #42251b;
+  --color-secondary-900: #2d1811; 
   
-  --color-accent-50: #fffbeb;
-  --color-accent-100: #fef3c7;
-  --color-accent-200: #fde68a;
-  --color-accent-300: #fcd34d;
-  --color-accent-400: #fbbf24;
-  --color-accent-500: #f59e0b; /* Accent (Gold) */
-  --color-accent-600: #d97706;
+  --color-accent-50: #fbf5ee;
+  --color-accent-100: #f5eadc;
+  --color-accent-200: #ead3b6;
+  --color-accent-300: #e0bc8e;
+  --color-accent-400: #d5a567;
+  --color-accent-500: #C88A3D; /* Accent Gold/Caramel */
+  --color-accent-600: #b07833;
   
   --color-success-50: #f0fdf4;
   --color-success-100: #dcfce7;
   --color-success-500: #22c55e; 
-  --color-success-600: #16a34a; /* Success Green */
+  --color-success-600: #16a34a; 
 
-  --color-bg-main: #fdfbf7; /* Parchment Background */
-  --color-card-bg: #ffffff;
+  --color-bg-main: #F3E5D3; /* Main Beige/Skin */
+  --color-card-bg: #FFF8EE; /* Light Cream Cards */
   
-  --color-text-main: #1c1917; /* Very Dark Brown/Gray */
-  --color-text-secondary: #57534e; /* Soft Brown/Gray */
+  --color-text-main: #2B1B14; /* Dark Text */
+  --color-text-secondary: #6F5A4D; /* Muted Text */
 }
 
 body {
