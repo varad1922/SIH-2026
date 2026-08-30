@@ -1,15 +1,29 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { OAuth2Client } = require('google-auth-library');
 
 const User = require('../models/User');
 const Profile = require('../models/Profile');
 const { protect } = require('../middleware/authMiddleware');
 
-const googleClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID
-);
+// Google OAuth client
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// Helper function to generate JWT
+const generateToken = (user) => {
+  return jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '30d',
+    }
+  );
+};
 
 // REGISTER
 router.post('/register', async (req, res) => {
@@ -24,6 +38,7 @@ router.post('/register', async (req, res) => {
       jobRole
     } = req.body;
 
+    // Check if user already exists
     let user = await User.findOne({ email });
 
     if (user) {
@@ -32,6 +47,7 @@ router.post('/register', async (req, res) => {
       });
     }
 
+    // Create user
     user = new User({
       name,
       email,
@@ -41,6 +57,7 @@ router.post('/register', async (req, res) => {
 
     await user.save();
 
+    // Create user profile
     const profile = new Profile({
       user: user._id,
       department,
@@ -50,16 +67,8 @@ router.post('/register', async (req, res) => {
 
     await profile.save();
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '30d',
-      }
-    );
+    // Generate token
+    const token = generateToken(user);
 
     res.status(201).json({
       token,
@@ -74,7 +83,7 @@ router.post('/register', async (req, res) => {
     console.error('Register error:', error);
 
     res.status(500).json({
-      message: error.message,
+      message: error.message || 'Registration failed',
     });
   }
 });
@@ -100,16 +109,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '30d',
-      }
-    );
+    const token = generateToken(user);
 
     res.json({
       token,
@@ -124,7 +124,7 @@ router.post('/login', async (req, res) => {
     console.error('Login error:', error);
 
     res.status(500).json({
-      message: error.message,
+      message: error.message || 'Login failed',
     });
   }
 });
@@ -140,6 +140,7 @@ router.post('/google', async (req, res) => {
       });
     }
 
+    // Verify Google credential
     const ticket = await googleClient.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -151,47 +152,49 @@ router.post('/google', async (req, res) => {
       sub: googleId,
       email,
       name,
+      picture,
+      email_verified,
     } = payload;
 
+    if (!email_verified) {
+      return res.status(400).json({
+        message: 'Google email is not verified',
+      });
+    }
+
+    // Find existing user
     let user = await User.findOne({ email });
 
-    // Create user if Google user doesn't exist
+    // Create user if first Google login
     if (!user) {
+      const randomPassword = crypto.randomBytes(32).toString('hex');
+
       user = new User({
-        name,
+        name: name || 'Google User',
         email,
-        googleId,
+        password: randomPassword,
         role: 'Learner',
+        googleId,
       });
 
       await user.save();
 
-      // Create empty profile for Google user
-      const profile = new Profile({
+      // Create profile for Google user
+      await Profile.create({
         user: user._id,
       });
-
-      await profile.save();
     }
 
-    const jwtToken = jwt.sign(
-      {
-        id: user._id,
-        role: user.role,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: '30d',
-      }
-    );
+    const jwtToken = generateToken(user);
 
-    res.json({
+    res.status(200).json({
       token: jwtToken,
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         role: user.role,
+        picture,
       },
     });
   } catch (error) {
@@ -199,6 +202,7 @@ router.post('/google', async (req, res) => {
 
     res.status(401).json({
       message: 'Google authentication failed',
+      error: error.message,
     });
   }
 });
@@ -221,7 +225,7 @@ router.get('/me', protect, async (req, res) => {
     console.error('Get user error:', error);
 
     res.status(500).json({
-      message: error.message,
+      message: error.message || 'Failed to get user',
     });
   }
 });
@@ -260,7 +264,7 @@ router.post('/forgot-password', async (req, res) => {
     console.error('Forgot password error:', error);
 
     res.status(500).json({
-      message: error.message,
+      message: error.message || 'Password reset request failed',
     });
   }
 });
