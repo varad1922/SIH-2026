@@ -18,7 +18,16 @@ const Sidebar = () => {
   return (
     <div className="w-64 bg-card-bg border-r border-border-main h-screen fixed left-0 top-0 flex flex-col z-50 shadow-sm">
       <div className="p-6 flex items-center justify-center border-b border-border-main">
-        <img src="/logo.png" alt="AI Education Platform" className="h-12 object-contain" />
+          <img 
+            src="/logo.png" 
+            alt="AI Education Platform Logo" 
+            className="w-8 h-8 object-contain rounded-md border border-border-main"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'block';
+            }}
+          />
+          <span className="hidden text-xl font-bold text-text-main tracking-tight">AI Edu</span>
       </div>
       
       <nav className="flex-1 py-6 px-4 space-y-1">

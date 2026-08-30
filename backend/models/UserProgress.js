@@ -9,6 +9,8 @@ const userProgressSchema = new mongoose.Schema({
     enum: ['Locked', 'Not Started', 'In Progress', 'Completed', 'Reviewed'], 
     default: 'Not Started' 
   },
+  currentLessonId: { type: String },
+  completedLessons: [{ type: String }], // Array of completed lesson IDs
   progressPercentage: { type: Number, default: 0 },
   lastAccessed: { type: Date, default: Date.now }
 }, { timestamps: true });

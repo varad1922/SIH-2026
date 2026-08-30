@@ -9,9 +9,9 @@ const mockPathDetails = {
     title: "Foundations of Study",
     description: "Build a strong base in your chosen field. This module covers all the prerequisite knowledge you need.",
     modules: [
-      { id: 101, title: "Introduction and Overview", duration: "45 min" },
-      { id: 102, title: "Basic Concepts & Terminology", duration: "1.5 hrs" },
-      { id: 103, title: "Fundamental Frameworks", duration: "2 hrs" }
+      { id: 101, title: "AI and Data Fundamentals", duration: "45 min" },
+      { id: 102, title: "Practical Application Exercise", duration: "1.5 hrs" },
+      { id: 103, title: "Applied AI and Decision Making", duration: "2 hrs" }
     ]
   },
   2: {
@@ -41,132 +41,111 @@ const mockModulesData = {
   "101": {
     _id: "101",
     moduleNumber: 1,
-    title: "Introduction and Overview",
-    description: "Build a strong base in your chosen field. This module covers all the prerequisite knowledge you need.",
+    title: "AI and Data Fundamentals",
+    description: "Build a strong base in your chosen field.",
     duration: "45 min",
-    content: {
-      overview: "Welcome to your first step toward mastery. In this module, we introduce the fundamental concepts of your chosen field and explain why these building blocks are so critical for your long-term success.",
-      objectives: ["Understand the high-level goals of this learning path.", "Identify the primary tools and concepts required.", "Establish a daily study routine."],
-      keyConcepts: [
-        { title: "The Learning Mindset", description: "Approaching problems with curiosity rather than frustration." },
-        { title: "Iterative Mastery", description: "Learning small chunks of information repeatedly over time." }
-      ],
-      studyMaterial: [
-        { heading: "Why This Matters", content: "Before diving into complex theories, it's essential to understand the 'why'. The concepts learned here will act as the foundation for everything you build later. Without a solid understanding of the basics, advanced topics will feel overwhelming and disconnected." }
-      ],
-      importantTerms: [
-        { term: "Prerequisite", definition: "A thing that is required as a prior condition for something else to happen or exist." },
-        { term: "Foundation", definition: "An underlying basis or principle." }
-      ],
-      examples: [
-        { title: "The House Metaphor", description: "You cannot build the roof of a house before laying the foundation. Similarly, you cannot master advanced frameworks without first understanding basic variables and logic." }
-      ]
-    }
+    lessons: [
+      { 
+        id: "l1", 
+        title: "Introduction to Artificial Intelligence", 
+        order: 1,
+        content: `
+          <h3>What is AI?</h3>
+          <p>Artificial Intelligence refers to the simulation of human intelligence in machines programmed to think like humans and mimic their actions.</p>
+          <div class="bg-card-alt p-4 rounded-lg my-4 border border-border-main">
+            <strong>Key Concept:</strong> AI is not just robots; it includes algorithms that power search engines, recommendation systems, and natural language processing.
+          </div>
+        `
+      },
+      { 
+        id: "l2", 
+        title: "Types of Data", 
+        order: 2,
+        content: `
+          <h3>Structured vs Unstructured Data</h3>
+          <p>Data is the fuel for AI. It can be categorized broadly into structured (like databases) and unstructured (like text, images, audio).</p>
+          <ul>
+            <li><strong>Structured:</strong> Excel sheets, SQL databases.</li>
+            <li><strong>Unstructured:</strong> Social media posts, video files.</li>
+          </ul>
+        `
+      },
+      { 
+        id: "l3", 
+        title: "Basics of Machine Learning", 
+        order: 3,
+        content: `
+          <h3>How do machines learn?</h3>
+          <p>Machine learning is a subset of AI where systems learn from data rather than being explicitly programmed.</p>
+          <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto my-4">
+# Pseudo code for basic ML flow
+model = initialize_model()
+model.train(training_data)
+predictions = model.predict(new_data)
+          </pre>
+        `
+      },
+      { 
+        id: "l4", 
+        title: "Data Collection and Quality", 
+        order: 4,
+        content: `
+          <h3>Garbage In, Garbage Out</h3>
+          <p>The quality of your AI heavily depends on the quality of the data used to train it. Biased or incomplete data leads to biased or inaccurate models.</p>
+        `
+      },
+      { 
+        id: "l5", 
+        title: "Knowledge Check", 
+        order: 5,
+        content: `
+          <h3>Quiz</h3>
+          <p>Which of the following is considered unstructured data?</p>
+          <div class="space-y-2 mt-4">
+            <label class="flex items-center space-x-2"><input type="radio" name="q1" /> <span>A SQL Database table</span></label>
+            <label class="flex items-center space-x-2"><input type="radio" name="q1" /> <span>A CSV file</span></label>
+            <label class="flex items-center space-x-2"><input type="radio" name="q1" /> <span>An audio recording</span></label>
+          </div>
+        `
+      }
+    ]
   },
   "102": {
     _id: "102",
     moduleNumber: 2,
-    title: "Basic Concepts & Terminology",
-    description: "Learn the shared language of professionals in your field.",
+    title: "Practical Application Exercise",
+    description: "Apply your data knowledge.",
     duration: "1.5 hrs",
-    content: {
-      overview: "Every industry has its own language. This module will introduce you to the core vocabulary and basic concepts that you will use daily in your career.",
-      objectives: ["Memorize at least 20 key industry terms.", "Understand how basic concepts interlock to form complex systems."],
-      keyConcepts: [{ title: "Standardization", description: "Why industries agree on specific terminology to avoid confusion." }],
-      studyMaterial: [{ heading: "The Importance of Vocabulary", content: "When communicating with a team, precision matters. Using the correct terminology ensures that everyone is on the same page and reduces the likelihood of catastrophic errors." }],
-      importantTerms: [{ term: "Abstraction", definition: "The process of removing physical, spatial, or temporal details or attributes." }],
-      examples: [{ title: "Medical Jargon", description: "Just as doctors use specific Latin terms to communicate precisely, engineers use specific terms to discuss system architecture." }]
-    }
+    lessons: [
+      { id: "l1", title: "Understanding the Problem", order: 1, content: "<p>Define the scope of the problem you are trying to solve.</p>" },
+      { id: "l2", title: "Preparing a Dataset", order: 2, content: "<p>Clean and format your data for ingestion.</p>" },
+      { id: "l3", title: "Exploring the Data", order: 3, content: "<p>Perform Exploratory Data Analysis (EDA).</p>" },
+      { id: "l4", title: "Building a Simple ML Solution", order: 4, content: "<p>Create a basic linear regression or classification model.</p>" },
+      { id: "l5", title: "Evaluating Results", order: 5, content: "<p>Measure accuracy, precision, and recall.</p>" },
+      { id: "l6", title: "Practical Exercise", order: 6, content: "<p>Submit your completed project notebook.</p>" }
+    ]
   },
   "103": {
     _id: "103",
     moduleNumber: 3,
-    title: "Fundamental Frameworks",
-    description: "Understand the structures that support modern applications.",
+    title: "Applied AI and Decision Making",
+    description: "Using AI to drive business value.",
     duration: "2 hrs",
-    content: {
-      overview: "Frameworks provide a standard way to build and deploy applications. In this module, we will explore the most popular fundamental frameworks.",
-      objectives: ["Identify the purpose of a framework.", "Compare and contrast two major industry frameworks."],
-      keyConcepts: [{ title: "Don't Repeat Yourself (DRY)", description: "A principle of software development aimed at reducing repetition of software patterns." }],
-      studyMaterial: [{ heading: "Why Use Frameworks?", content: "Frameworks are like buying a pre-built chassis; you only need to focus on customizing the body and the interior. They save time, reduce bugs, and enforce best practices." }],
-      importantTerms: [{ term: "Library vs Framework", definition: "You call a library, but a framework calls you." }],
-      examples: [{ title: "React", description: "A popular JavaScript library for building user interfaces, often used alongside frameworks like Next.js." }]
-    }
+    lessons: [
+      { id: "l1", title: "Using AI Insights", order: 1, content: "<p>Translating model outputs into actionable business strategies.</p>" },
+      { id: "l2", title: "Data-Driven Decision Making", order: 2, content: "<p>How to transition from intuition-based to data-driven leadership.</p>" },
+      { id: "l3", title: "AI Ethics and Responsible AI", order: 3, content: "<p>Understanding bias, fairness, and transparency in AI models.</p>" },
+      { id: "l4", title: "Real-World Applications", order: 4, content: "<p>Case studies of successful AI implementations in various industries.</p>" },
+      { id: "l5", title: "Final Assessment", order: 5, content: "<p>Final quiz covering all modules in this path.</p>" }
+    ]
   },
-  // Path 2 Modules
-  "201": {
-    _id: "201",
-    moduleNumber: 1,
-    title: "Intermediate Techniques",
-    description: "Move beyond the basics to start solving real problems.",
-    duration: "2 hrs",
-    content: {
-      overview: "This module covers intermediate techniques required for professional work.",
-      objectives: ["Apply techniques to real-world scenarios."],
-      studyMaterial: [{ heading: "Application over Theory", content: "Now that you know the basics, it's time to build." }]
-    }
-  },
-  "202": {
-    _id: "202",
-    moduleNumber: 2,
-    title: "Practical Application Exercise",
-    description: "A hands-on exercise.",
-    duration: "3 hrs",
-    content: {
-      overview: "Put your skills to the test.",
-      objectives: ["Complete a guided project."],
-      studyMaterial: [{ heading: "Project Scope", content: "You will build a full application from start to finish." }]
-    }
-  },
-  "203": {
-    _id: "203",
-    moduleNumber: 3,
-    title: "Advanced Theory",
-    description: "Theoretical underpinnings of complex systems.",
-    duration: "2.5 hrs",
-    content: {
-      overview: "Deep dive into computer science theory.",
-      objectives: ["Understand algorithmic complexity."],
-      studyMaterial: [{ heading: "Big O Notation", content: "Understanding performance." }]
-    }
-  },
-  // Path 3 Modules
-  "301": {
-    _id: "301",
-    moduleNumber: 1,
-    title: "Capstone Briefing",
-    description: "Preparation for your final project.",
-    duration: "1 hr",
-    content: {
-      overview: "Review the requirements for your capstone project.",
-      objectives: ["Submit a project proposal."],
-      studyMaterial: [{ heading: "Choosing a Project", content: "Select a project that demonstrates your mastery." }]
-    }
-  },
-  "302": {
-    _id: "302",
-    moduleNumber: 2,
-    title: "Project Execution",
-    description: "Build your capstone project.",
-    duration: "10 hrs",
-    content: {
-      overview: "Execute your project plan.",
-      objectives: ["Build and deploy your project."],
-      studyMaterial: [{ heading: "Execution Phase", content: "Focus on writing clean, maintainable code." }]
-    }
-  },
-  "303": {
-    _id: "303",
-    moduleNumber: 3,
-    title: "Final Review",
-    description: "Review and polish your project.",
-    duration: "1 hr",
-    content: {
-      overview: "Prepare your project for presentation.",
-      objectives: ["Refactor code.", "Write documentation."],
-      studyMaterial: [{ heading: "The Polish", content: "Documentation and testing are what separate professionals from amateurs." }]
-    }
-  }
+  // Fallbacks for missing paths to prevent crashing, keeping it simple
+  "201": { _id: "201", moduleNumber: 1, title: "Intermediate Techniques", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
+  "202": { _id: "202", moduleNumber: 2, title: "Practical Application Exercise", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
+  "203": { _id: "203", moduleNumber: 3, title: "Advanced Theory", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
+  "301": { _id: "301", moduleNumber: 1, title: "Capstone Briefing", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
+  "302": { _id: "302", moduleNumber: 2, title: "Project Execution", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
+  "303": { _id: "303", moduleNumber: 3, title: "Final Review", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] }
 };
 
 // GET /api/learning-path/:pathId
@@ -188,7 +167,9 @@ router.get('/:pathId', protect, async (req, res) => {
       const progress = userProgress.find(p => p.moduleId === mod.id.toString());
       return {
         ...mod,
-        status: progress ? progress.status : 'Not Started'
+        status: progress ? progress.status : 'Not Started',
+        currentLessonId: progress ? progress.currentLessonId : null,
+        completedLessons: progress ? progress.completedLessons : []
       };
     });
 
@@ -210,17 +191,30 @@ router.get('/:pathId', protect, async (req, res) => {
 });
 
 // GET /api/learning-path/:pathId/modules/:moduleId
-// Fetch specific module content
-router.get('/:pathId/modules/:moduleId', protect, (req, res) => {
+// Fetch specific module content and progress
+router.get('/:pathId/modules/:moduleId', protect, async (req, res) => {
   try {
-    const { moduleId } = req.params;
+    const { pathId, moduleId } = req.params;
     const moduleData = mockModulesData[moduleId];
     
     if (!moduleData) {
       return res.status(404).json({ message: 'Module material not found.' });
     }
 
-    res.json({ module: moduleData });
+    const progress = await UserProgress.findOne({ user: req.user._id, pathId, moduleId });
+
+    res.json({ 
+      module: moduleData,
+      progress: progress ? {
+        status: progress.status,
+        currentLessonId: progress.currentLessonId,
+        completedLessons: progress.completedLessons
+      } : {
+        status: 'Not Started',
+        currentLessonId: null,
+        completedLessons: []
+      }
+    });
   } catch (error) {
     console.error('Error fetching module material:', error);
     res.status(500).json({ message: 'Server Error fetching module material.' });
@@ -239,9 +233,17 @@ router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
     }
 
     // Upsert the progress record
+    const updateData = { status, lastAccessed: Date.now() };
+    
+    // If resetting to Not Started, clear lessons
+    if (status === 'Not Started') {
+      updateData.completedLessons = [];
+      updateData.currentLessonId = null;
+    }
+
     const progress = await UserProgress.findOneAndUpdate(
       { user: req.user._id, pathId, moduleId },
-      { status, lastAccessed: Date.now() },
+      updateData,
       { new: true, upsert: true }
     );
 
@@ -249,6 +251,51 @@ router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
   } catch (error) {
     console.error('Error updating module status:', error);
     res.status(500).json({ message: 'Server Error updating module status.' });
+  }
+});
+
+// POST /api/learning-path/:pathId/modules/:moduleId/lessons/:lessonId/complete
+// Complete a lesson and potentially update module status
+router.post('/:pathId/modules/:moduleId/lessons/:lessonId/complete', protect, async (req, res) => {
+  try {
+    const { pathId, moduleId, lessonId } = req.params;
+    const { nextLessonId } = req.body; // Optional next lesson ID to set as current
+
+    let progress = await UserProgress.findOne({ user: req.user._id, pathId, moduleId });
+    
+    if (!progress) {
+      progress = new UserProgress({ user: req.user._id, pathId, moduleId, status: 'In Progress' });
+    }
+
+    // Add to completed lessons if not already there
+    if (!progress.completedLessons.includes(lessonId)) {
+      progress.completedLessons.push(lessonId);
+    }
+    
+    // Update current lesson or null if finished
+    progress.currentLessonId = nextLessonId || null;
+
+    // Check if all lessons are completed
+    const moduleData = mockModulesData[moduleId];
+    if (moduleData && progress.completedLessons.length >= moduleData.lessons.length) {
+      // Don't auto-downgrade a Reviewed module, but if it was In Progress, mark Completed
+      if (progress.status === 'In Progress' || progress.status === 'Not Started') {
+        progress.status = 'Completed';
+      }
+    } else {
+      // If we are progressing, ensure status is In Progress
+      if (progress.status === 'Not Started') {
+        progress.status = 'In Progress';
+      }
+    }
+
+    progress.lastAccessed = Date.now();
+    await progress.save();
+
+    res.json({ message: 'Lesson completed', progress });
+  } catch (error) {
+    console.error('Error completing lesson:', error);
+    res.status(500).json({ message: 'Server Error completing lesson.' });
   }
 });
 

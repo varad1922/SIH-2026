@@ -82,7 +82,18 @@ const Register = () => {
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-accent-500" />
 
         <div className="text-center mb-8 mt-2">
-          <img src="/logo.png" alt="AI Education Platform" className="h-16 object-contain mx-auto mb-4" />
+              <img 
+                src="/logo.png" 
+                alt="AI Education Platform Logo" 
+                className="w-14 h-14 object-contain shadow-sm rounded-xl border border-border-main mx-auto mb-4"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              <div className="hidden w-14 h-14 bg-secondary-600 rounded-xl items-center justify-center text-white font-bold text-xl shadow-sm mx-auto mb-4">
+                AI
+              </div>
 
           <h1 className="text-2xl font-bold text-[var(--color-text-main)] tracking-tight">
             Create Account
