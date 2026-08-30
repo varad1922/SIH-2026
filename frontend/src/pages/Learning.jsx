@@ -5,23 +5,23 @@ import { BookOpen, Star, Clock, ChevronRight, CheckCircle2 } from 'lucide-react'
 const Learning = () => {
   const [courses, setCourses] = useState([]);
   
-  // Dynamic mock state for the learning path so buttons work
+  // Keep the structure for the learning path, but ideally this would also be fetched.
+  // We'll leave it as a state block that users can interact with for the demo.
   const [learningPath, setLearningPath] = useState([
-    { id: 1, title: "Python Basics for Stats", status: "Completed", type: "Foundation" },
-    { id: 2, title: "Advanced Data Visualization", status: "In Progress", type: "Core Skill" },
-    { id: 3, title: "Machine Learning Fundamentals", status: "Locked", type: "Advanced" }
+    { id: 1, title: "Foundations of Study", status: "Completed", type: "Foundation" },
+    { id: 2, title: "Advanced Methods", status: "In Progress", type: "Core Skill" },
+    { id: 3, title: "Mastery Integration", status: "Locked", type: "Advanced" }
   ]);
 
   useEffect(() => {
     axios.get('http://localhost:5000/api/courses')
       .then(res => setCourses(res.data))
-      .catch(err => console.log(err));
+      .catch(err => console.error("Failed to fetch courses", err));
   }, []);
 
   const handleContinue = (nodeId) => {
     setLearningPath(prev => prev.map(node => {
       if (node.id === nodeId) return { ...node, status: 'Completed' };
-      // Unlock the next one if it was locked
       if (node.id === nodeId + 1 && node.status === 'Locked') return { ...node, status: 'In Progress' };
       return node;
     }));
@@ -88,19 +88,24 @@ const Learning = () => {
         <div className="space-y-6">
           <h2 className="text-xl font-bold text-gray-900 tracking-tight">Course Catalog</h2>
           <div className="space-y-4">
-            {courses.map((course, idx) => (
-              <div key={idx} className="bg-white/80 backdrop-blur-md p-5 rounded-3xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 group hover:border-secondary-300 hover:shadow-secondary-500/10 transition-all cursor-pointer">
+            {courses.length > 0 ? courses.map((course, idx) => (
+              <div key={course._id || idx} className="bg-white/80 backdrop-blur-md p-5 rounded-3xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] border border-gray-100 group hover:border-secondary-300 hover:shadow-secondary-500/10 transition-all cursor-pointer">
                 <div className="w-12 h-12 bg-secondary-50 rounded-2xl flex items-center justify-center text-secondary-600 mb-4 group-hover:scale-110 group-hover:bg-secondary-600 group-hover:text-white transition-all shadow-sm">
                   <BookOpen className="w-6 h-6" />
                 </div>
                 <h3 className="font-bold text-gray-900 mb-1 tracking-tight">{course.title}</h3>
                 <p className="text-sm font-medium text-gray-500 mb-4">{course.category}</p>
                 <div className="flex items-center space-x-4 text-xs font-bold text-gray-600">
-                  <div className="flex items-center"><Star className="w-4 h-4 text-warning-500 mr-1" /> {course.difficulty}</div>
+                  <div className="flex items-center"><Star className="w-4 h-4 text-accent-500 mr-1" /> {course.difficulty}</div>
                   <div className="flex items-center"><Clock className="w-4 h-4 text-gray-400 mr-1" /> {course.duration}h</div>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div className="p-8 text-center text-gray-500 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                <BookOpen className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                <p>No courses available right now.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,52 +1,67 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-const bcrypt = require('bcryptjs');
-const User = require('./models/User');
-const Profile = require('./models/Profile');
-const Skill = require('./models/Skill');
 const Course = require('./models/Course');
-const connectDB = require('./config/db');
 
-dotenv.config();
-
-const seedData = async () => {
+const seedDB = async () => {
   try {
-    await connectDB();
-    await User.deleteMany();
-    await Profile.deleteMany();
-    await Skill.deleteMany();
-    await Course.deleteMany();
+    const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
+    await mongoose.connect(uri);
+    console.log("Connected to MongoDB");
 
-    // Create Skills
-    const skills = await Skill.insertMany([
-      { name: 'Python', category: 'TECHNICAL', description: 'Python programming' },
-      { name: 'Data Visualization', category: 'TECHNICAL', description: 'Data Viz' },
-      { name: 'Leadership', category: 'BEHAVIOURAL AND MANAGERIAL', description: 'Leadership skills' },
-      { name: 'Survey Design', category: 'STATISTICAL', description: 'Survey methodology' }
-    ]);
+    // Clear existing
+    await Course.deleteMany({});
+    
+    const courses = [
+      {
+        title: 'Introduction to Data Science with Python',
+        description: 'Learn the fundamentals of Data Science using Python, Pandas, and Scikit-Learn.',
+        difficulty: 'Beginner',
+        duration: 20,
+        provider: 'Coursera',
+        category: 'Data Science',
+        learningUrl: 'https://coursera.org',
+        isDemoIntegration: true
+      },
+      {
+        title: 'Advanced Machine Learning Architectures',
+        description: 'Deep dive into Neural Networks, Transformers, and LLM fine-tuning.',
+        difficulty: 'Advanced',
+        duration: 40,
+        provider: 'Udacity',
+        category: 'Artificial Intelligence',
+        learningUrl: 'https://udacity.com',
+        isDemoIntegration: true
+      },
+      {
+        title: 'Full-Stack Web Development with React',
+        description: 'Master the MERN stack and build production-ready applications.',
+        difficulty: 'Intermediate',
+        duration: 35,
+        provider: 'Udemy',
+        category: 'Web Development',
+        learningUrl: 'https://udemy.com',
+        isDemoIntegration: true
+      },
+      {
+        title: 'Cybersecurity Fundamentals',
+        description: 'Understand the basics of network security, cryptography, and risk management.',
+        difficulty: 'Beginner',
+        duration: 15,
+        provider: 'edX',
+        category: 'Security',
+        learningUrl: 'https://edx.org',
+        isDemoIntegration: true
+      }
+    ];
 
-    // Create Courses
-    await Course.insertMany([
-      { title: 'Python for Data Science', difficulty: 'Beginner', duration: 10, skills: [skills[0]._id], category: 'TECHNICAL', isDemoIntegration: true },
-      { title: 'Advanced Survey Design', difficulty: 'Advanced', duration: 15, skills: [skills[3]._id], category: 'STATISTICAL', isDemoIntegration: true },
-      { title: 'Leadership in Tech', difficulty: 'Intermediate', duration: 5, skills: [skills[2]._id], category: 'BEHAVIOURAL', isDemoIntegration: true }
-    ]);
-
-    // Create Users
-    const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash('password123', salt);
-
-    const admin = await User.create({ name: 'Admin User', email: 'admin@example.com', password: hashPassword, role: 'Admin' });
-    const learner = await User.create({ name: 'Learner User', email: 'learner@example.com', password: hashPassword, role: 'Learner' });
-
-    await Profile.create({ user: learner._id, department: 'Statistics', jobRole: 'Data Analyst' });
-
-    console.log('Data Seeded Successfully');
-    process.exit();
-  } catch (error) {
-    console.error(`Error with data import: ${error}`);
+    await Course.insertMany(courses);
+    console.log("Database seeded successfully with courses.");
+    
+    process.exit(0);
+  } catch (err) {
+    console.error("Seeding failed:", err);
     process.exit(1);
   }
 };
 
-seedData();
+seedDB();
