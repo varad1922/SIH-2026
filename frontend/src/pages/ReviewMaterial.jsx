@@ -50,6 +50,7 @@ const ReviewMaterial = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [readProgress, setReadProgress] = useState(0);
+  const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     const fetchMaterial = async () => {
@@ -83,6 +84,20 @@ const ReviewMaterial = () => {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  const handleMarkReviewed = async () => {
+    if (updating) return;
+    try {
+      setUpdating(true);
+      await api.post(`/learning-path/${pathId}/modules/${moduleId}/status`, { status: 'Reviewed' });
+      navigate(`/learning/${pathId}`);
+    } catch (err) {
+      console.error('Error marking as reviewed:', err);
+      alert('Failed to mark as reviewed. Please try again.');
+    } finally {
+      setUpdating(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -247,10 +262,11 @@ const ReviewMaterial = () => {
           </button>
           
           <button 
-            onClick={() => navigate(`/learning/${pathId}`)}
-            className="px-6 py-3 bg-secondary-600 text-white font-bold rounded-xl hover:bg-secondary-700 transition-colors shadow-sm flex items-center"
+            onClick={handleMarkReviewed}
+            disabled={updating}
+            className="px-6 py-3 bg-secondary-600 text-white font-bold rounded-xl hover:bg-secondary-700 transition-colors shadow-sm flex items-center disabled:opacity-50"
           >
-            <CheckCircle className="w-5 h-5 mr-2" /> Mark as Reviewed
+            <CheckCircle className="w-5 h-5 mr-2" /> {updating ? 'Saving...' : 'Mark as Reviewed'}
           </button>
         </div>
 
