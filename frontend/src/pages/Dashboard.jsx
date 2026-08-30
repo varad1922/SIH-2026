@@ -1,6 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { SocketContext } from '../context/SocketContext';
+import api from '../api/client';
 import {
   UserCircle,
   BookOpen,
@@ -16,6 +18,43 @@ import {
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchAnalytics = async () => {
+    try {
+      setLoading(true);
+      const res = await api.get('/analytics/overview');
+      setAnalytics(res.data);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to fetch dashboard data.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('progress_updated', () => {
+        fetchAnalytics();
+      });
+      socket.on('quiz_completed', () => {
+        fetchAnalytics();
+      });
+      return () => {
+        socket.off('progress_updated');
+        socket.off('quiz_completed');
+      };
+    }
+  }, [socket]);
 
   const handleLogout = () => {
     logout();
@@ -93,54 +132,65 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
-                  Competency
-                </p>
-                <p className="text-3xl font-black text-text-main">
-                  76%
-                </p>
+            {loading ? (
+              <div className="animate-pulse space-y-4">
+                <div className="h-8 bg-border-main rounded w-full"></div>
+                <div className="h-8 bg-border-main rounded w-3/4"></div>
               </div>
+            ) : error ? (
+              <p className="text-red-500 font-bold">{error}</p>
+            ) : analytics && analytics.coursesCompleted === 0 && analytics.learningHours === 0 ? (
+              <p className="text-text-secondary italic">No learning activity yet. Start a learning module to begin building your progress.</p>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
 
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
-                  Learning Hours
-                </p>
-                <div className="flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-secondary-600" />
+                <div>
+                  <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
+                    Completion
+                  </p>
                   <p className="text-3xl font-black text-text-main">
-                    45
+                    {analytics?.completionPercentage || 0}%
                   </p>
                 </div>
-              </div>
 
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
-                  Courses
-                </p>
-                <div className="flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-secondary-600" />
-                  <p className="text-3xl font-black text-text-main">
-                    12
+                <div>
+                  <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
+                    Learning Hours
                   </p>
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-secondary-600" />
+                    <p className="text-3xl font-black text-text-main">
+                      {analytics?.learningHours || 0}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div>
-                <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
-                  Badges
-                </p>
-                <div className="flex items-center gap-2">
-                  <Award className="w-5 h-5 text-secondary-600" />
-                  <p className="text-3xl font-black text-text-main">
-                    8
+                <div>
+                  <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
+                    Courses
                   </p>
+                  <div className="flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-secondary-600" />
+                    <p className="text-3xl font-black text-text-main">
+                      {analytics?.coursesCompleted || 0}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-            </div>
+                <div>
+                  <p className="text-xs uppercase tracking-wider font-bold text-text-secondary mb-2">
+                    Badges
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Award className="w-5 h-5 text-secondary-600" />
+                    <p className="text-3xl font-black text-text-main">
+                      {analytics?.skillBadges || 0}
+                    </p>
+                  </div>
+                </div>
+
+              </div>
+            )}
           </div>
 
           {/* CURRENT LEARNING */}

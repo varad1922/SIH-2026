@@ -1,11 +1,48 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { SocketContext } from '../context/SocketContext';
+import api from '../api/client';
 import { ArrowLeft, BookOpen, Clock, Award, TrendingUp, LogOut } from 'lucide-react';
 
 const Profile = () => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  
+  const [analytics, setAnalytics] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAnalytics = async () => {
+    try {
+      const res = await api.get('/analytics/overview');
+      setAnalytics(res.data);
+    } catch (err) {
+      console.error('Failed to fetch analytics', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAnalytics();
+  }, []);
+
+  const { socket } = useContext(SocketContext);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('progress_updated', () => {
+        fetchAnalytics();
+      });
+      socket.on('quiz_completed', () => {
+        fetchAnalytics();
+      });
+      return () => {
+        socket.off('progress_updated');
+        socket.off('quiz_completed');
+      };
+    }
+  }, [socket]);
 
   const handleLogout = () => {
     logout();
@@ -13,7 +50,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8 lg:py-12 animate-in fade-in duration-500">
+    <div className="max-w-4xl mx-auto px-6 py-8 lg:py-12">
       <Link to="/" className="inline-flex items-center gap-2 text-text-secondary hover:text-secondary-600 font-bold transition-colors mb-8">
         <ArrowLeft className="w-5 h-5" /> Back to Dashboard
       </Link>
@@ -29,16 +66,16 @@ const Profile = () => {
             
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
               <div className="w-24 h-24 rounded-3xl bg-primary-100 flex items-center justify-center text-primary-700 font-black text-4xl border border-primary-200 shadow-sm shrink-0">
-                {user?.name ? user.name.charAt(0).toUpperCase() : 'V'}
+                {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
               </div>
               <div className="space-y-2">
                 <div>
                   <p className="text-xs font-bold text-text-secondary uppercase tracking-widest">Name</p>
-                  <p className="text-xl font-bold text-text-main">{user?.name || 'Varad Shahane'}</p>
+                  <p className="text-xl font-bold text-text-main">{user?.name || 'Learner'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-text-secondary uppercase tracking-widest">Email</p>
-                  <p className="font-medium text-text-main">{user?.email || 'varad@example.com'}</p>
+                  <p className="font-medium text-text-main">{user?.email || 'No email provided'}</p>
                 </div>
                 <div>
                   <p className="text-xs font-bold text-text-secondary uppercase tracking-widest">Role</p>
@@ -53,31 +90,40 @@ const Profile = () => {
         <section className="bg-card-bg border border-border-main rounded-3xl p-8 shadow-sm">
           <h2 className="text-xs uppercase tracking-[0.2em] font-black text-text-secondary mb-6">Learning Statistics</h2>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
-              <BookOpen className="w-6 h-6 text-primary-500 mb-3" />
-              <p className="text-sm font-bold text-text-secondary mb-1">Courses Completed</p>
-              <p className="text-3xl font-black text-text-main">12</p>
+          {loading ? (
+            <div className="animate-pulse flex gap-4">
+              <div className="h-24 bg-border-main rounded-2xl flex-1"></div>
+              <div className="h-24 bg-border-main rounded-2xl flex-1"></div>
+              <div className="h-24 bg-border-main rounded-2xl flex-1"></div>
+              <div className="h-24 bg-border-main rounded-2xl flex-1"></div>
             </div>
-            
-            <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
-              <Clock className="w-6 h-6 text-secondary-500 mb-3" />
-              <p className="text-sm font-bold text-text-secondary mb-1">Learning Hours</p>
-              <p className="text-3xl font-black text-text-main">45h</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
+                <BookOpen className="w-6 h-6 text-primary-500 mb-3" />
+                <p className="text-sm font-bold text-text-secondary mb-1">Courses Completed</p>
+                <p className="text-3xl font-black text-text-main">{analytics?.coursesCompleted || 0}</p>
+              </div>
+              
+              <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
+                <Clock className="w-6 h-6 text-secondary-500 mb-3" />
+                <p className="text-sm font-bold text-text-secondary mb-1">Learning Hours</p>
+                <p className="text-3xl font-black text-text-main">{analytics?.learningHours || 0}</p>
+              </div>
+              
+              <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
+                <Award className="w-6 h-6 text-accent-500 mb-3" />
+                <p className="text-sm font-bold text-text-secondary mb-1">Skill Badges</p>
+                <p className="text-3xl font-black text-text-main">{analytics?.skillBadges || 0}</p>
+              </div>
+              
+              <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
+                <TrendingUp className="w-6 h-6 text-success-500 mb-3" />
+                <p className="text-sm font-bold text-text-secondary mb-1">Competency</p>
+                <p className="text-3xl font-black text-text-main">{analytics?.completionPercentage || 0}%</p>
+              </div>
             </div>
-            
-            <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
-              <Award className="w-6 h-6 text-accent-500 mb-3" />
-              <p className="text-sm font-bold text-text-secondary mb-1">Skill Badges</p>
-              <p className="text-3xl font-black text-text-main">8</p>
-            </div>
-            
-            <div className="p-5 rounded-2xl bg-card-alt border border-border-main">
-              <TrendingUp className="w-6 h-6 text-success-500 mb-3" />
-              <p className="text-sm font-bold text-text-secondary mb-1">Competency</p>
-              <p className="text-3xl font-black text-text-main">76%</p>
-            </div>
-          </div>
+          )}
         </section>
         
         <div className="pt-4 pb-8">

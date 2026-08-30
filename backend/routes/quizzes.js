@@ -151,4 +151,47 @@ Rules:
   }
 });
 
+const { protect } = require('../middleware/authMiddleware');
+const QuizAttempt = require('../models/QuizAttempt');
+
+router.post('/attempt', protect, async (req, res) => {
+  try {
+    const { topic, score, totalQuestions, correctAnswers } = req.body;
+    
+    if (!topic || score === undefined || !totalQuestions || correctAnswers === undefined) {
+      return res.status(400).json({ message: 'Missing required fields for quiz attempt.' });
+    }
+
+    const attempt = new QuizAttempt({
+      user: req.user._id,
+      topic,
+      score,
+      totalQuestions,
+      correctAnswers
+    });
+
+    await attempt.save();
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('quiz_completed', { user: req.user._id, score });
+    }
+
+    res.status(201).json({ message: 'Quiz attempt saved successfully.', attempt });
+  } catch (error) {
+    console.error('Error saving quiz attempt:', error);
+    res.status(500).json({ message: 'Failed to save quiz attempt.', error: error.message });
+  }
+});
+
+router.get('/history', protect, async (req, res) => {
+  try {
+    const history = await QuizAttempt.find({ user: req.user._id }).sort({ completedAt: -1 });
+    res.status(200).json({ history });
+  } catch (error) {
+    console.error('Error fetching quiz history:', error);
+    res.status(500).json({ message: 'Failed to fetch quiz history.', error: error.message });
+  }
+});
+
 module.exports = router;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../api/client';
 import { useNavigate } from 'react-router-dom';
 import { Target, CheckCircle, XCircle, Loader2, Award, ArrowRight, AlertTriangle, Search, Clock, List, ArrowLeft, RefreshCw, Eye } from 'lucide-react';
 
@@ -90,7 +90,7 @@ const Assessment = () => {
     isSubmittingRef.current = false;
     
     try {
-      const res = await axios.post('http://localhost:5000/api/quizzes/generate', { topic: topicObj.topic });
+      const res = await api.post('/quizzes/generate', { topic: topicObj.topic });
       setQuestions(res.data.questions);
       setViewMode('quiz');
       
@@ -113,7 +113,7 @@ const Assessment = () => {
     setAnswers(prev => ({ ...prev, [currentQ]: option }));
   };
 
-  const submitQuiz = (isAuto = false) => {
+  const submitQuiz = async (isAuto = false) => {
     if (!isAuto && isSubmittingRef.current) return;
     isSubmittingRef.current = true;
 
@@ -121,15 +121,23 @@ const Assessment = () => {
       document.exitFullscreen().catch(err => console.log(err));
     }
     
-    setAnswers(currentAnswers => {
-      let s = 0;
-      questions.forEach((q, idx) => {
-        if (currentAnswers[idx] === q.correctAnswer) s++;
-      });
-      setScore(s);
-      setViewMode('results');
-      return currentAnswers;
+    let s = 0;
+    questions.forEach((q, idx) => {
+      if (answers[idx] === q.correctAnswer) s++;
     });
+    setScore(s);
+
+    try {
+      await api.post('/quizzes/attempt', {
+        topic: selectedTopic.topic,
+        score: s,
+        totalQuestions: questions.length,
+      });
+    } catch (err) {
+      console.error('Failed to save quiz attempt', err);
+    }
+
+    setViewMode('results');
   };
 
   const getPerformanceFeedback = (percentage) => {

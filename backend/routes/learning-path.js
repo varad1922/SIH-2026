@@ -1,129 +1,87 @@
 const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/authMiddleware');
+const LearningPath = require('../models/LearningPath');
+const Module = require('../models/Module');
+const Lesson = require('../models/Lesson');
 const UserProgress = require('../models/UserProgress');
 
-const mockPathDetails = {
-  1: {
-    id: 1,
-    title: "Foundations of Study",
-    description: "Build a strong base in your chosen field. This module covers all the prerequisite knowledge you need.",
-    modules: [
-      { id: 101, title: "AI and Data Fundamentals", duration: "45 min" },
-      { id: 102, title: "Practical Application Exercise", duration: "1.5 hrs" },
-      { id: 103, title: "Applied AI and Decision Making", duration: "2 hrs" }
-    ]
-  },
-  2: {
-    id: 2,
-    title: "Advanced Methods",
-    description: "Deep dive into complex methodologies and practical applications.",
-    modules: [
-      { id: 201, title: "Intermediate Techniques", duration: "2 hrs" },
-      { id: 202, title: "Practical Application Exercise", duration: "3 hrs" },
-      { id: 203, title: "Advanced Theory", duration: "2.5 hrs" }
-    ]
-  },
-  3: {
-    id: 3,
-    title: "Mastery Integration",
-    description: "Synthesize everything you've learned into a final capstone project.",
-    modules: [
-      { id: 301, title: "Capstone Briefing", duration: "1 hr" },
-      { id: 302, title: "Project Execution", duration: "10 hrs" },
-      { id: 303, title: "Final Review", duration: "1 hr" }
-    ]
-  }
-};
+// GET /api/learning-path
+// Fetch all learning paths with high-level user progress
+router.get('/', protect, async (req, res) => {
+  try {
+    const paths = await LearningPath.find().populate('modules');
+    const userProgress = await UserProgress.find({ user: req.user._id });
 
-const mockModulesData = {
-  // Path 1 Modules
-  "101": {
-    _id: "101",
-    moduleNumber: 1,
-    title: "AI and Data Fundamentals",
-    description: "Build a strong base in your chosen field.",
-    duration: "45 min",
-    lessons: [
-      { id: "l1", title: "Introduction to Artificial Intelligence", order: 1, content: "<h3>Introduction</h3><p>AI refers to the simulation of human intelligence...</p>" },
-      { id: "l2", title: "Understanding Data", order: 2, content: "<h3>Understanding Data</h3><p>Data is the fuel for AI. It can be structured or unstructured.</p>" },
-      { id: "l3", title: "Introduction to Machine Learning", order: 3, content: "<h3>Machine Learning</h3><p>Systems learn from data rather than being explicitly programmed.</p>" },
-      { id: "l4", title: "Data Quality", order: 4, content: "<h3>Data Quality</h3><p>Garbage in, garbage out. The quality of your AI depends on the data.</p>" },
-      { id: "l5", title: "AI in Real Life", order: 5, content: "<h3>Real Life AI</h3><p>AI is everywhere: recommendation engines, autonomous vehicles, etc.</p>" },
-      { id: "l6", title: "Knowledge Check", order: 6, content: "<h3>Quiz</h3><p>Complete the knowledge check to proceed.</p>" }
-    ]
-  },
-  "102": {
-    _id: "102",
-    moduleNumber: 2,
-    title: "Practical Application Exercise",
-    description: "Apply your data knowledge.",
-    duration: "1.5 hrs",
-    lessons: [
-      { id: "l1", title: "Understanding the Problem", order: 1, content: "<h3>Problem Definition</h3><p>Define the scope of the problem you are trying to solve.</p>" },
-      { id: "l2", title: "Preparing a Dataset", order: 2, content: "<h3>Data Prep</h3><p>Clean and format your data for ingestion.</p>" },
-      { id: "l3", title: "Exploring Data", order: 3, content: "<h3>EDA</h3><p>Perform Exploratory Data Analysis (EDA).</p>" },
-      { id: "l4", title: "Choosing an Approach", order: 4, content: "<h3>Model Selection</h3><p>Choose the right algorithm for the job.</p>" },
-      { id: "l5", title: "Building a Solution", order: 5, content: "<h3>Implementation</h3><p>Write code to build your ML solution.</p>" },
-      { id: "l6", title: "Practical Exercise", order: 6, content: "<h3>Exercise</h3><p>Submit your completed project notebook.</p>" }
-    ]
-  },
-  "103": {
-    _id: "103",
-    moduleNumber: 3,
-    title: "Applied AI and Decision Making",
-    description: "Using AI to drive business value.",
-    duration: "2 hrs",
-    lessons: [
-      { id: "l1", title: "AI Insights", order: 1, content: "<h3>Insights</h3><p>Translating model outputs into actionable strategies.</p>" },
-      { id: "l2", title: "Data-Driven Decisions", order: 2, content: "<h3>Decision Making</h3><p>Transition from intuition to data.</p>" },
-      { id: "l3", title: "Responsible AI", order: 3, content: "<h3>Ethics</h3><p>Understanding bias, fairness, and transparency.</p>" },
-      { id: "l4", title: "Real-World Applications", order: 4, content: "<h3>Case Studies</h3><p>Successful AI implementations across industries.</p>" },
-      { id: "l5", title: "AI Strategy", order: 5, content: "<h3>Strategy</h3><p>Building an AI roadmap for your organization.</p>" },
-      { id: "l6", title: "Final Assessment", order: 6, content: "<h3>Final Quiz</h3><p>Test your knowledge of the entire path.</p>" }
-    ]
-  },
-  // Path 2 & 3 Fallbacks
-  "201": { _id: "201", moduleNumber: 1, title: "Intermediate Techniques", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
-  "202": { _id: "202", moduleNumber: 2, title: "Practical Application Exercise", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
-  "203": { _id: "203", moduleNumber: 3, title: "Advanced Theory", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
-  "301": { _id: "301", moduleNumber: 1, title: "Capstone Briefing", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
-  "302": { _id: "302", moduleNumber: 2, title: "Project Execution", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
-  "303": { _id: "303", moduleNumber: 3, title: "Final Review", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] }
-};
+    const pathsWithProgress = paths.map(path => {
+      const modulesWithProgress = path.modules.map(mod => {
+        const progress = userProgress.find(p => p.moduleId === mod._id.toString());
+        return {
+          id: mod._id,
+          number: mod.number,
+          title: mod.title,
+          description: mod.description,
+          duration: mod.duration,
+          status: progress ? progress.status : 'Not Started'
+        };
+      });
+
+      const completedCount = modulesWithProgress.filter(m => m.status === 'Completed').length;
+      const progressPercentage = path.modules.length > 0 ? Math.round((completedCount / path.modules.length) * 100) : 0;
+
+      return {
+        id: path._id,
+        title: path.title,
+        description: path.description,
+        type: path.type,
+        progress: progressPercentage,
+        modules: modulesWithProgress
+      };
+    });
+
+    res.json(pathsWithProgress);
+  } catch (error) {
+    console.error('Error fetching learning paths:', error);
+    res.status(500).json({ message: 'Server Error fetching learning paths.' });
+  }
+});
 
 // GET /api/learning-path/:pathId
-// Fetch learning path details merged with user progress
+// Fetch specific learning path details merged with user progress
 router.get('/:pathId', protect, async (req, res) => {
   try {
     const { pathId } = req.params;
-    const path = mockPathDetails[pathId];
+    const path = await LearningPath.findById(pathId).populate('modules');
     
     if (!path) {
       return res.status(404).json({ message: 'Learning Path not found.' });
     }
 
-    // Fetch user progress for this path
     const userProgress = await UserProgress.find({ user: req.user._id, pathId });
 
-    // Merge progress into modules
     const modulesWithProgress = path.modules.map(mod => {
-      const progress = userProgress.find(p => p.moduleId === mod.id.toString());
+      const progress = userProgress.find(p => p.moduleId === mod._id.toString());
       return {
-        ...mod,
+        id: mod._id,
+        number: mod.number,
+        title: mod.title,
+        description: mod.description,
+        duration: mod.duration,
         status: progress ? progress.status : 'Not Started',
         currentLessonId: progress ? progress.currentLessonId : null,
         completedLessons: progress ? progress.completedLessons : []
       };
     });
 
-    // Calculate overall progress percentage based on completed modules
     const completedCount = modulesWithProgress.filter(m => m.status === 'Completed').length;
-    const overallProgress = Math.round((completedCount / path.modules.length) * 100);
+    const overallProgress = path.modules.length > 0 ? Math.round((completedCount / path.modules.length) * 100) : 0;
 
     res.json({
       path: {
-        ...path,
+        id: path._id,
+        title: path.title,
+        description: path.description,
+        type: path.type,
         progress: overallProgress,
         modules: modulesWithProgress
       }
@@ -139,16 +97,32 @@ router.get('/:pathId', protect, async (req, res) => {
 router.get('/:pathId/modules/:moduleId', protect, async (req, res) => {
   try {
     const { pathId, moduleId } = req.params;
-    const moduleData = mockModulesData[moduleId];
+    const mod = await Module.findOne({ _id: moduleId, learningPathId: pathId }).populate('lessons');
     
-    if (!moduleData) {
+    if (!mod) {
       return res.status(404).json({ message: 'Module material not found.' });
     }
 
     const progress = await UserProgress.findOne({ user: req.user._id, pathId, moduleId });
 
+    const formattedLessons = mod.lessons
+      .sort((a, b) => a.order - b.order)
+      .map(lesson => ({
+        id: lesson._id,
+        title: lesson.title,
+        order: lesson.order,
+        content: lesson.content
+      }));
+
     res.json({ 
-      module: moduleData,
+      module: {
+        id: mod._id,
+        moduleNumber: mod.number,
+        title: mod.title,
+        description: mod.description,
+        duration: mod.duration,
+        lessons: formattedLessons
+      },
       progress: progress ? {
         status: progress.status,
         currentLessonId: progress.currentLessonId,
@@ -166,7 +140,7 @@ router.get('/:pathId/modules/:moduleId', protect, async (req, res) => {
 });
 
 // POST /api/learning-path/:pathId/modules/:moduleId/status
-// Update module status (start, complete, unreview, etc.)
+// Update module status (start, unreview, etc.)
 router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
   try {
     const { pathId, moduleId } = req.params;
@@ -176,7 +150,6 @@ router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
       return res.status(400).json({ message: 'Invalid status provided.' });
     }
 
-    // Upsert the progress record
     const updateData = { status, lastAccessed: Date.now() };
     
     // If resetting to Not Started, clear lessons
@@ -191,6 +164,11 @@ router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
       { new: true, upsert: true }
     );
 
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('progress_updated', { user: req.user._id, type: 'module_status' });
+    }
+
     res.json({ message: 'Status updated successfully', progress });
   } catch (error) {
     console.error('Error updating module status:', error);
@@ -203,7 +181,7 @@ router.post('/:pathId/modules/:moduleId/status', protect, async (req, res) => {
 router.post('/:pathId/modules/:moduleId/lessons/:lessonId/complete', protect, async (req, res) => {
   try {
     const { pathId, moduleId, lessonId } = req.params;
-    const { nextLessonId } = req.body; // Optional next lesson ID to set as current
+    const { nextLessonId } = req.body; 
 
     let progress = await UserProgress.findOne({ user: req.user._id, pathId, moduleId });
     
@@ -211,22 +189,18 @@ router.post('/:pathId/modules/:moduleId/lessons/:lessonId/complete', protect, as
       progress = new UserProgress({ user: req.user._id, pathId, moduleId, status: 'In Progress' });
     }
 
-    // Add to completed lessons if not already there
     if (!progress.completedLessons.includes(lessonId)) {
       progress.completedLessons.push(lessonId);
     }
     
-    // Update current lesson or null if finished
     progress.currentLessonId = nextLessonId || null;
 
-    // Check if all lessons are completed
-    const moduleData = mockModulesData[moduleId];
-    if (moduleData && progress.completedLessons.length >= moduleData.lessons.length) {
+    const mod = await Module.findById(moduleId);
+    if (mod && progress.completedLessons.length >= mod.lessons.length) {
       if (progress.status === 'In Progress' || progress.status === 'Not Started') {
         progress.status = 'Completed';
       }
     } else {
-      // If we are progressing, ensure status is In Progress
       if (progress.status === 'Not Started') {
         progress.status = 'In Progress';
       }
@@ -234,6 +208,11 @@ router.post('/:pathId/modules/:moduleId/lessons/:lessonId/complete', protect, as
 
     progress.lastAccessed = Date.now();
     await progress.save();
+
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('progress_updated', { user: req.user._id, type: 'lesson_completed' });
+    }
 
     res.json({ message: 'Lesson completed', progress });
   } catch (error) {

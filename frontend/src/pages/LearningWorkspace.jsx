@@ -113,7 +113,7 @@ const LearningWorkspace = () => {
       if (nextLesson) {
         selectLesson(nextLesson.id);
       } else {
-        navigate(`/learning/${pathId}`);
+        navigate(`/learning`);
       }
     } catch (err) {
       console.error('Failed to save lesson progress:', err);
@@ -146,10 +146,10 @@ const LearningWorkspace = () => {
               Try Again
             </button>
             <button
-              onClick={() => navigate(`/learning/${pathId}`)}
+              onClick={() => navigate(`/learning`)}
               className="px-5 py-3 rounded-xl border border-border-main text-text-main font-bold"
             >
-              Return to Learning Path
+              Return to Learning Hub
             </button>
           </div>
         </div>
@@ -170,10 +170,10 @@ const LearningWorkspace = () => {
       <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-80 max-w-[85vw] bg-card-bg border-r border-border-main flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="p-6 border-b border-border-main">
           <button
-            onClick={() => navigate(`/learning/${pathId}`)}
+            onClick={() => navigate(`/learning`)}
             className="flex items-center text-sm font-bold text-text-secondary hover:text-secondary-700 mb-6"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back to learning path
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back to learning hub
           </button>
           <p className="text-xs uppercase tracking-[0.18em] font-black text-secondary-600 mb-2">AI Education Platform</p>
           <h2 className="font-bold text-text-main leading-tight">{path.title}</h2>
