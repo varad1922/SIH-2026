@@ -64,12 +64,10 @@ const Login = () => {
 
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-secondary-600" />
 
-        <div className="text-center mb-8 mt-4">
-          <div className="w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl mx-auto flex items-center justify-center text-white font-black text-2xl shadow-lg shadow-primary-500/30 mb-4">
-            SI
-          </div>
+        <div className="text-center mb-8 mt-2">
+          <img src="/logo.png" alt="AI Education Platform" className="h-16 object-contain mx-auto mb-4" />
 
-          <h1 className="text-3xl font-black text-[var(--color-text-main)] tracking-tight">
+          <h1 className="text-2xl font-bold text-[var(--color-text-main)] tracking-tight">
             Welcome Back
           </h1>
 
@@ -91,13 +89,13 @@ const Login = () => {
             </label>
 
             <div className="relative">
-              <Mail className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Mail className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                 placeholder="you@example.com"
                 required
               />
@@ -112,20 +110,20 @@ const Login = () => {
 
               <Link
                 to="/forgot-password"
-                className="text-sm font-bold text-primary-600 hover:text-primary-700"
+                className="text-sm font-bold text-secondary-600 hover:text-secondary-700"
               >
                 Forgot Password?
               </Link>
             </div>
 
             <div className="relative">
-              <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                 placeholder="••••••••"
                 required
               />
@@ -135,7 +133,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary-600 text-white font-bold py-3.5 rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/30 flex items-center justify-center space-x-2 disabled:opacity-50"
+            className="w-full bg-secondary-600 text-white font-bold py-3 rounded-xl hover:bg-secondary-700 hover:-translate-y-0.5 transition-all shadow-sm flex items-center justify-center space-x-2 disabled:opacity-50"
           >
             <LogIn className="w-5 h-5" />
 

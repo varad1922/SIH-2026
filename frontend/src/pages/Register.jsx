@@ -82,7 +82,9 @@ const Register = () => {
         <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-accent-500" />
 
         <div className="text-center mb-8 mt-2">
-          <h1 className="text-3xl font-black text-[var(--color-text-main)] tracking-tight">
+          <img src="/logo.png" alt="AI Education Platform" className="h-16 object-contain mx-auto mb-4" />
+
+          <h1 className="text-2xl font-bold text-[var(--color-text-main)] tracking-tight">
             Create Account
           </h1>
 
@@ -106,14 +108,14 @@ const Register = () => {
             </label>
 
             <div className="relative">
-              <User className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <User className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
               <input
                 name="name"
                 type="text"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                 placeholder="Enter your full name"
                 required
               />
@@ -127,14 +129,14 @@ const Register = () => {
             </label>
 
             <div className="relative">
-              <Mail className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Mail className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
               <input
                 name="email"
                 type="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                 placeholder="you@example.com"
                 required
               />
@@ -148,14 +150,14 @@ const Register = () => {
             </label>
 
             <div className="relative">
-              <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Lock className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
               <input
                 name="password"
                 type="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                 placeholder="••••••••"
                 required
               />
@@ -171,14 +173,14 @@ const Register = () => {
               </label>
 
               <div className="relative">
-                <Building className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Building className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
                 <input
                   name="department"
                   type="text"
                   value={formData.department}
                   onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                  className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                   placeholder="e.g. IT"
                 />
               </div>
@@ -190,14 +192,14 @@ const Register = () => {
               </label>
 
               <div className="relative">
-                <Briefcase className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <Briefcase className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-primary-400" />
 
                 <input
                   name="jobRole"
                   type="text"
                   value={formData.jobRole}
                   onChange={handleChange}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-all outline-none"
+                  className="w-full pl-12 pr-4 py-3 bg-card-alt border border-border-main rounded-xl focus:ring-2 focus:ring-secondary-500/50 focus:border-secondary-500 transition-all outline-none"
                   placeholder="e.g. Analyst"
                 />
               </div>
@@ -209,7 +211,7 @@ const Register = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-primary-600 text-white font-bold py-3.5 rounded-xl hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/30 mt-4 disabled:opacity-50"
+            className="w-full bg-secondary-600 text-white font-bold py-3 rounded-xl hover:bg-secondary-700 hover:-translate-y-0.5 transition-all shadow-sm mt-4 disabled:opacity-50"
           >
             {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
@@ -218,7 +220,7 @@ const Register = () => {
 
         {/* Divider */}
         <div className="mt-8 relative flex items-center justify-center mb-6">
-          <div className="absolute inset-x-0 h-px bg-gray-200" />
+          <div className="absolute inset-x-0 h-px bg-border-main" />
 
           <span className="relative bg-[var(--color-card-bg)] px-4 text-sm text-[var(--color-text-secondary)] font-medium">
             Or continue with
@@ -242,7 +244,7 @@ const Register = () => {
           Already have an account?{' '}
           <Link
             to="/login"
-            className="font-bold text-primary-600 hover:text-primary-700"
+            className="font-bold text-secondary-600 hover:text-secondary-700"
           >
             Sign in
           </Link>

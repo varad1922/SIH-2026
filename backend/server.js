@@ -32,7 +32,7 @@ app.use('/api/quizzes', require('./routes/quizzes'));
 // app.use('/api/assessments', require('./routes/assessments'));
 // app.use('/api/skills', require('./routes/skills'));
 // app.use('/api/courses', require('./routes/courses'));
-// app.use('/api/learning-path', require('./routes/learning-path'));
+app.use('/api/learning-path', require('./routes/learning-path'));
 // app.use('/api/quizzes', require('./routes/quizzes'));
 // app.use('/api/analytics', require('./routes/analytics'));
 // app.use('/api/chat', require('./routes/chat'));

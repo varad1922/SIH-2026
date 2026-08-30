@@ -1,11 +1,15 @@
 const express = require('express');
 const router = express.Router();
 const { GoogleGenAI } = require('@google/genai');
+const { protect } = require('../middleware/authMiddleware');
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-router.post('/', async (req, res) => {
+router.post('/', protect, async (req, res) => {
   try {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: "AI Assistant is not configured on this server. Please set GEMINI_API_KEY." });
+    }
+
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const { messages } = req.body;
     
     // Create the chat context

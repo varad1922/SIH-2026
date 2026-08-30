@@ -16,34 +16,25 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-white/80 backdrop-blur-xl border-r border-gray-100 h-screen fixed left-0 top-0 flex flex-col z-50">
-      <div className="p-6 flex items-center space-x-3 bg-gradient-to-r from-primary-50 to-transparent">
-        <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-600 rounded-xl flex items-center justify-center text-white font-bold shadow-lg shadow-primary-500/30">
-          SI
-        </div>
-        <span className="font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600 text-xl">Skill Intel</span>
+    <div className="w-64 bg-card-bg border-r border-border-main h-screen fixed left-0 top-0 flex flex-col z-50 shadow-sm">
+      <div className="p-6 flex items-center justify-center border-b border-border-main">
+        <img src="/logo.png" alt="AI Education Platform" className="h-12 object-contain" />
       </div>
       
-      <nav className="flex-1 py-8 px-4 space-y-2">
+      <nav className="flex-1 py-6 px-4 space-y-1">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
             <Link
               key={item.name}
               to={item.path}
-              className={`flex items-center space-x-3 px-4 py-3.5 rounded-xl transition-all duration-300 group relative overflow-hidden ${
+              className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors duration-200 group relative ${
                 isActive 
-                  ? 'text-primary-700 font-semibold' 
-                  : 'text-gray-500 hover:text-gray-900'
+                  ? 'bg-secondary-50 text-secondary-700 font-semibold border border-secondary-200' 
+                  : 'text-text-secondary hover:bg-card-alt hover:text-text-main border border-transparent'
               }`}
             >
-              {isActive && (
-                <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-secondary-50/30 -z-10" />
-              )}
-              {isActive && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500 rounded-r-full shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-              )}
-              <div className={`transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
+              <div className={`transition-transform duration-200 ${isActive ? 'text-secondary-600' : 'text-primary-400 group-hover:text-accent-600'}`}>
                 {item.icon}
               </div>
               <span>{item.name}</span>
@@ -52,8 +43,8 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <div className="p-6">
-        <button onClick={logout} className="flex items-center space-x-3 px-4 py-3 text-gray-500 hover:bg-red-50 hover:text-red-600 rounded-xl w-full transition-all duration-300 font-medium cursor-pointer">
+      <div className="p-4 border-t border-border-main">
+        <button onClick={logout} className="flex items-center space-x-3 px-4 py-3 text-text-secondary hover:bg-red-50 hover:text-red-700 rounded-lg w-full transition-colors duration-200 font-medium cursor-pointer">
           <LogOut className="w-5 h-5" />
           <span>Logout</span>
         </button>
@@ -64,11 +55,12 @@ const Sidebar = () => {
 
 const DashboardLayout = () => {
   return (
-    <div className="min-h-screen bg-[#f4f7fb] flex font-sans text-gray-900 selection:bg-primary-100 selection:text-primary-900">
-      <div className="fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-secondary-100/40 via-transparent to-transparent" />
+    <div className="min-h-screen flex font-sans selection:bg-secondary-200 selection:text-primary-900">
       <Sidebar />
       <div className="flex-1 ml-64 p-8 relative">
-        <Outlet />
+        <div className="max-w-7xl mx-auto">
+          <Outlet />
+        </div>
       </div>
     </div>
   );
