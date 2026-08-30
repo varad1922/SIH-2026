@@ -6,10 +6,6 @@ export const AuthContext = createContext();
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-if (!API_URL) {
-  console.error('VITE_API_URL is missing');
-}
-
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(
@@ -19,112 +15,98 @@ export const AuthProvider = ({ children }) => {
 
   const navigate = useNavigate();
 
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(`${API_URL}/auth/me`);
-      setUser(res.data);
-    } catch (error) {
-      console.error(
-        'Auth fetch error:',
-        error.response?.data || error.message
-      );
-
-      localStorage.removeItem('token');
-      setToken(null);
-      setUser(null);
-
-      delete axios.defaults.headers.common.Authorization;
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (token) {
-      axios.defaults.headers.common.Authorization = `Bearer ${token}`;
+      axios.defaults.headers.common[
+        'Authorization'
+      ] = `Bearer ${token}`;
+
       fetchUser();
     } else {
       setLoading(false);
     }
   }, [token]);
 
-  const login = async (email, password) => {
+  const fetchUser = async () => {
     try {
-      const res = await axios.post(
-        `${API_URL}/auth/login`,
-        { email, password }
+      const res = await axios.get(
+        `${API_URL}/auth/me`
       );
 
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
-      setUser(res.data.user);
-
-      navigate('/');
+      setUser(res.data);
     } catch (error) {
-      console.error(
-        'Login error:',
-        error.response?.data || error.message
-      );
+      console.error('Auth fetch error:', error);
 
-      throw error;
+      localStorage.removeItem('token');
+      setToken(null);
+      setUser(null);
+
+      delete axios.defaults.headers.common[
+        'Authorization'
+      ];
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const login = async (email, password) => {
+    const res = await axios.post(
+      `${API_URL}/auth/login`,
+      {
+        email,
+        password,
+      }
+    );
+
+    localStorage.setItem('token', res.data.token);
+    setToken(res.data.token);
+    setUser(res.data.user);
+
+    navigate('/');
   };
 
   const register = async (userData) => {
-    try {
-      const res = await axios.post(
-        `${API_URL}/auth/register`,
-        userData
-      );
+    const res = await axios.post(
+      `${API_URL}/auth/register`,
+      userData
+    );
 
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
-      setUser(res.data.user);
+    localStorage.setItem('token', res.data.token);
+    setToken(res.data.token);
+    setUser(res.data.user);
 
-      navigate('/');
-    } catch (error) {
-      console.error(
-        'Register error:',
-        error.response?.data || error.message
-      );
-
-      throw error;
-    }
+    navigate('/');
   };
 
   const loginWithGoogle = async (googleToken) => {
-    try {
-      console.log(
-        'Sending Google token to:',
-        `${API_URL}/auth/google`
-      );
+    console.log(
+      'Sending Google token to:',
+      `${API_URL}/auth/google`
+    );
 
-      const res = await axios.post(
-        `${API_URL}/auth/google`,
-        { token: googleToken }
-      );
+    const res = await axios.post(
+      `${API_URL}/auth/google`,
+      {
+        token: googleToken,
+      }
+    );
 
-      localStorage.setItem('token', res.data.token);
-      setToken(res.data.token);
-      setUser(res.data.user);
+    localStorage.setItem('token', res.data.token);
+    setToken(res.data.token);
+    setUser(res.data.user);
 
-      navigate('/');
-    } catch (error) {
-      console.error(
-        'Google login backend error:',
-        error.response?.data || error.message
-      );
-
-      throw error;
-    }
+    navigate('/');
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+
     setToken(null);
     setUser(null);
 
-    delete axios.defaults.headers.common.Authorization;
+    delete axios.defaults.headers.common[
+      'Authorization'
+    ];
 
     navigate('/login');
   };
@@ -138,10 +120,10 @@ export const AuthProvider = ({ children }) => {
         register,
         loginWithGoogle,
         logout,
-        loading
+        loading,
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-};
+}
