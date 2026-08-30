@@ -13,6 +13,10 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password,
+      role,
+      department,
+      designation,
+      jobRole
     } = req.body;
 
     // Check if user already exists
