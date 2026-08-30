@@ -45,69 +45,12 @@ const mockModulesData = {
     description: "Build a strong base in your chosen field.",
     duration: "45 min",
     lessons: [
-      { 
-        id: "l1", 
-        title: "Introduction to Artificial Intelligence", 
-        order: 1,
-        content: `
-          <h3>What is AI?</h3>
-          <p>Artificial Intelligence refers to the simulation of human intelligence in machines programmed to think like humans and mimic their actions.</p>
-          <div class="bg-card-alt p-4 rounded-lg my-4 border border-border-main">
-            <strong>Key Concept:</strong> AI is not just robots; it includes algorithms that power search engines, recommendation systems, and natural language processing.
-          </div>
-        `
-      },
-      { 
-        id: "l2", 
-        title: "Types of Data", 
-        order: 2,
-        content: `
-          <h3>Structured vs Unstructured Data</h3>
-          <p>Data is the fuel for AI. It can be categorized broadly into structured (like databases) and unstructured (like text, images, audio).</p>
-          <ul>
-            <li><strong>Structured:</strong> Excel sheets, SQL databases.</li>
-            <li><strong>Unstructured:</strong> Social media posts, video files.</li>
-          </ul>
-        `
-      },
-      { 
-        id: "l3", 
-        title: "Basics of Machine Learning", 
-        order: 3,
-        content: `
-          <h3>How do machines learn?</h3>
-          <p>Machine learning is a subset of AI where systems learn from data rather than being explicitly programmed.</p>
-          <pre class="bg-gray-800 text-white p-4 rounded-lg overflow-x-auto my-4">
-# Pseudo code for basic ML flow
-model = initialize_model()
-model.train(training_data)
-predictions = model.predict(new_data)
-          </pre>
-        `
-      },
-      { 
-        id: "l4", 
-        title: "Data Collection and Quality", 
-        order: 4,
-        content: `
-          <h3>Garbage In, Garbage Out</h3>
-          <p>The quality of your AI heavily depends on the quality of the data used to train it. Biased or incomplete data leads to biased or inaccurate models.</p>
-        `
-      },
-      { 
-        id: "l5", 
-        title: "Knowledge Check", 
-        order: 5,
-        content: `
-          <h3>Quiz</h3>
-          <p>Which of the following is considered unstructured data?</p>
-          <div class="space-y-2 mt-4">
-            <label class="flex items-center space-x-2"><input type="radio" name="q1" /> <span>A SQL Database table</span></label>
-            <label class="flex items-center space-x-2"><input type="radio" name="q1" /> <span>A CSV file</span></label>
-            <label class="flex items-center space-x-2"><input type="radio" name="q1" /> <span>An audio recording</span></label>
-          </div>
-        `
-      }
+      { id: "l1", title: "Introduction to Artificial Intelligence", order: 1, content: "<h3>Introduction</h3><p>AI refers to the simulation of human intelligence...</p>" },
+      { id: "l2", title: "Understanding Data", order: 2, content: "<h3>Understanding Data</h3><p>Data is the fuel for AI. It can be structured or unstructured.</p>" },
+      { id: "l3", title: "Introduction to Machine Learning", order: 3, content: "<h3>Machine Learning</h3><p>Systems learn from data rather than being explicitly programmed.</p>" },
+      { id: "l4", title: "Data Quality", order: 4, content: "<h3>Data Quality</h3><p>Garbage in, garbage out. The quality of your AI depends on the data.</p>" },
+      { id: "l5", title: "AI in Real Life", order: 5, content: "<h3>Real Life AI</h3><p>AI is everywhere: recommendation engines, autonomous vehicles, etc.</p>" },
+      { id: "l6", title: "Knowledge Check", order: 6, content: "<h3>Quiz</h3><p>Complete the knowledge check to proceed.</p>" }
     ]
   },
   "102": {
@@ -117,12 +60,12 @@ predictions = model.predict(new_data)
     description: "Apply your data knowledge.",
     duration: "1.5 hrs",
     lessons: [
-      { id: "l1", title: "Understanding the Problem", order: 1, content: "<p>Define the scope of the problem you are trying to solve.</p>" },
-      { id: "l2", title: "Preparing a Dataset", order: 2, content: "<p>Clean and format your data for ingestion.</p>" },
-      { id: "l3", title: "Exploring the Data", order: 3, content: "<p>Perform Exploratory Data Analysis (EDA).</p>" },
-      { id: "l4", title: "Building a Simple ML Solution", order: 4, content: "<p>Create a basic linear regression or classification model.</p>" },
-      { id: "l5", title: "Evaluating Results", order: 5, content: "<p>Measure accuracy, precision, and recall.</p>" },
-      { id: "l6", title: "Practical Exercise", order: 6, content: "<p>Submit your completed project notebook.</p>" }
+      { id: "l1", title: "Understanding the Problem", order: 1, content: "<h3>Problem Definition</h3><p>Define the scope of the problem you are trying to solve.</p>" },
+      { id: "l2", title: "Preparing a Dataset", order: 2, content: "<h3>Data Prep</h3><p>Clean and format your data for ingestion.</p>" },
+      { id: "l3", title: "Exploring Data", order: 3, content: "<h3>EDA</h3><p>Perform Exploratory Data Analysis (EDA).</p>" },
+      { id: "l4", title: "Choosing an Approach", order: 4, content: "<h3>Model Selection</h3><p>Choose the right algorithm for the job.</p>" },
+      { id: "l5", title: "Building a Solution", order: 5, content: "<h3>Implementation</h3><p>Write code to build your ML solution.</p>" },
+      { id: "l6", title: "Practical Exercise", order: 6, content: "<h3>Exercise</h3><p>Submit your completed project notebook.</p>" }
     ]
   },
   "103": {
@@ -132,14 +75,15 @@ predictions = model.predict(new_data)
     description: "Using AI to drive business value.",
     duration: "2 hrs",
     lessons: [
-      { id: "l1", title: "Using AI Insights", order: 1, content: "<p>Translating model outputs into actionable business strategies.</p>" },
-      { id: "l2", title: "Data-Driven Decision Making", order: 2, content: "<p>How to transition from intuition-based to data-driven leadership.</p>" },
-      { id: "l3", title: "AI Ethics and Responsible AI", order: 3, content: "<p>Understanding bias, fairness, and transparency in AI models.</p>" },
-      { id: "l4", title: "Real-World Applications", order: 4, content: "<p>Case studies of successful AI implementations in various industries.</p>" },
-      { id: "l5", title: "Final Assessment", order: 5, content: "<p>Final quiz covering all modules in this path.</p>" }
+      { id: "l1", title: "AI Insights", order: 1, content: "<h3>Insights</h3><p>Translating model outputs into actionable strategies.</p>" },
+      { id: "l2", title: "Data-Driven Decisions", order: 2, content: "<h3>Decision Making</h3><p>Transition from intuition to data.</p>" },
+      { id: "l3", title: "Responsible AI", order: 3, content: "<h3>Ethics</h3><p>Understanding bias, fairness, and transparency.</p>" },
+      { id: "l4", title: "Real-World Applications", order: 4, content: "<h3>Case Studies</h3><p>Successful AI implementations across industries.</p>" },
+      { id: "l5", title: "AI Strategy", order: 5, content: "<h3>Strategy</h3><p>Building an AI roadmap for your organization.</p>" },
+      { id: "l6", title: "Final Assessment", order: 6, content: "<h3>Final Quiz</h3><p>Test your knowledge of the entire path.</p>" }
     ]
   },
-  // Fallbacks for missing paths to prevent crashing, keeping it simple
+  // Path 2 & 3 Fallbacks
   "201": { _id: "201", moduleNumber: 1, title: "Intermediate Techniques", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
   "202": { _id: "202", moduleNumber: 2, title: "Practical Application Exercise", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },
   "203": { _id: "203", moduleNumber: 3, title: "Advanced Theory", lessons: [{ id: "l1", title: "Lesson 1", order: 1, content: "<p>Placeholder content</p>" }] },

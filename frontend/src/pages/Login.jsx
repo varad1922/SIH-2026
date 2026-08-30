@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { AuthContext } from '../context/AuthContext';
-import { LogIn, Mail, Lock } from 'lucide-react';
+import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -42,54 +42,54 @@ const Login = () => {
       await loginWithGoogle(credentialResponse.credential);
     } catch (err) {
       console.error('Google login error:', err);
-
       setError(
         err.response?.data?.message ||
           'Google Login failed. Please try again.'
       );
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleGoogleError = () => {
-    console.error('Google authentication failed');
-    setError('Google Login failed. Please try again.');
-    setLoading(false);
+  const handleGoogleError = (errorResponse) => {
+    console.error('Google Auth Error:', errorResponse);
+    setError(
+      'Google Sign-In failed. Ensure your Google Cloud Console Authorized JavaScript Origins matches this exact domain/URL.'
+    );
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center p-4 selection:bg-primary-100">
-      <div className="max-w-md w-full bg-[var(--color-card-bg)] rounded-3xl shadow-xl p-8 border border-gray-100 relative overflow-hidden">
+    <div className="min-h-screen bg-bg-main flex items-center justify-center p-4">
+      <div className="max-w-md w-full animate-in fade-in zoom-in-95 duration-500">
+        <div className="bg-card-bg rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-border-main p-8 relative overflow-hidden">
+          {/* Header Accent */}
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-secondary-600" />
 
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-secondary-600" />
-
-        <div className="text-center mb-8 mt-2">
+          <div className="text-center mb-8 mt-2">
               <img 
                 src="/logo.png" 
                 alt="AI Education Platform Logo" 
-                className="w-14 h-14 object-contain shadow-sm rounded-xl border border-border-main"
+                className="w-14 h-14 object-contain shadow-sm rounded-xl border border-border-main mx-auto mb-4"
                 onError={(e) => {
                   e.target.style.display = 'none';
                   e.target.nextSibling.style.display = 'flex';
                 }}
               />
-              <div className="hidden w-14 h-14 bg-secondary-600 rounded-xl items-center justify-center text-white font-bold text-xl shadow-sm">
+              <div className="hidden w-14 h-14 bg-secondary-600 rounded-xl items-center justify-center text-white font-bold text-xl shadow-sm mx-auto mb-4">
                 AI
               </div>
+          </div>
 
           <h1 className="text-2xl font-bold text-[var(--color-text-main)] tracking-tight">
             Welcome Back
           </h1>
-
-          <p className="text-[var(--color-text-secondary)] mt-2">
-            Sign in to continue your learning journey.
+          <p className="text-[var(--color-text-secondary)] mt-1">
+            Log in to continue your learning journey
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm font-medium border border-red-100">
-            {error}
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 flex items-start space-x-2 mb-6">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <span>{error}</span>
           </div>
         )}
 

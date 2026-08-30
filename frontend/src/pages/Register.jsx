@@ -56,9 +56,9 @@ const Register = () => {
       }
 
       await loginWithGoogle(credentialResponse.credential);
+      navigate('/');
     } catch (err) {
-      console.error('Google registration error:', err);
-
+      console.error('Google login error:', err);
       setError(
         err.response?.data?.message ||
           'Google Sign Up failed. Please try again.'
@@ -68,18 +68,19 @@ const Register = () => {
     }
   };
 
-  const handleGoogleError = () => {
-    console.error('Google authentication failed');
-
-    setError('Google Sign Up failed. Please try again.');
-    setLoading(false);
+  const handleGoogleError = (errorResponse) => {
+    console.error('Google Auth Error:', errorResponse);
+    setError(
+      'Google Sign-In failed. Ensure your Google Cloud Console Authorized JavaScript Origins matches this exact domain/URL.'
+    );
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-bg-main)] flex items-center justify-center p-4 py-12 selection:bg-primary-100">
-      <div className="max-w-lg w-full bg-[var(--color-card-bg)] rounded-3xl shadow-xl p-8 border border-gray-100 relative overflow-hidden">
-
-        <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-accent-500" />
+    <div className="min-h-screen bg-bg-main flex items-center justify-center p-4 py-12">
+      <div className="max-w-md w-full animate-in fade-in zoom-in-95 duration-500">
+        <div className="bg-card-bg rounded-2xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] border border-border-main p-8 relative overflow-hidden">
+          {/* Header Accent */}
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary-600 to-accent-500" />
 
         <div className="text-center mb-8 mt-2">
               <img 
@@ -94,19 +95,20 @@ const Register = () => {
               <div className="hidden w-14 h-14 bg-secondary-600 rounded-xl items-center justify-center text-white font-bold text-xl shadow-sm mx-auto mb-4">
                 AI
               </div>
+          </div>
 
           <h1 className="text-2xl font-bold text-[var(--color-text-main)] tracking-tight">
             Create Account
           </h1>
-
-          <p className="text-[var(--color-text-secondary)] mt-2">
-            Join Skill Intel to accelerate your career.
+          <p className="text-[var(--color-text-secondary)] mt-1">
+            Join the AI Education Platform
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm font-medium border border-red-100">
-            {error}
+          <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-medium border border-red-100 flex items-start space-x-2 mb-6">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <span>{error}</span>
           </div>
         )}
 
