@@ -13,13 +13,28 @@ router.get('/', async (req, res) => {
 
 router.get('/recommendations', async (req, res) => {
   try {
-    // Basic mock logic for prototype, we return all courses sorted randomly
+    // Deterministic logic based on course ID for consistent UI rendering without real ML backend
     const courses = await Course.find().populate('skills');
-    const recommended = courses.map(c => ({
-      course: c,
-      score: Math.floor(Math.random() * 100),
-      reason: 'Based on your skill gap'
-    })).sort((a, b) => b.score - a.score);
+    
+    const generateDeterministicScore = (id) => {
+      let hash = 0;
+      const str = id.toString();
+      for (let i = 0; i < str.length; i++) {
+        hash = (hash << 5) - hash + str.charCodeAt(i);
+        hash |= 0; 
+      }
+      return 60 + (Math.abs(hash) % 36); // Score between 60 and 95
+    };
+
+    const recommended = courses.map(c => {
+      const score = generateDeterministicScore(c._id);
+      return {
+        course: c,
+        score: score,
+        reason: 'Recommended to address your identified skill gaps.'
+      };
+    }).sort((a, b) => b.score - a.score);
+    
     res.json(recommended);
   } catch (error) {
     res.status(500).json({ message: error.message });

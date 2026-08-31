@@ -221,4 +221,120 @@ router.post('/:pathId/modules/:moduleId/lessons/:lessonId/complete', protect, as
   }
 });
 
+// POST /api/learning-path/:pathId/modules/:moduleId/lessons/:lessonId/generate-notes
+// Generate comprehensive notes for a lesson using AI
+router.post('/:pathId/modules/:moduleId/lessons/:lessonId/generate-notes', protect, async (req, res) => {
+  try {
+    const { lessonId } = req.params;
+    
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ message: 'Lesson not found' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: 'AI API Key is missing. Cannot generate notes.' });
+    }
+
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    
+    const prompt = `You are an expert educational course creator for the Skill Intel platform. 
+Generate a comprehensive, highly detailed study guide from scratch for a lesson titled: "${lesson.title}".
+Assume the learner is starting from scratch and needs a proper, in-depth explanation. Structure the lesson with:
+1. An engaging Introduction.
+2. Core Concepts explained clearly with depth.
+3. Practical Real-world Examples.
+4. Key Takeaways / Summary.
+
+IMPORTANT: Return the output EXCLUSIVELY in plain HTML tags (like <h2>, <h3>, <p>, <strong>, <ul>, <li>). 
+DO NOT use ANY Markdown (no asterisks **, no hashes #). Do NOT wrap your response in markdown code blocks (\`\`\`html). Just output raw HTML.`;
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: prompt
+    });
+
+    // Clean the response just in case Gemini wraps it in a code block despite instructions
+    let generatedContent = response.text;
+    generatedContent = generatedContent.replace(/```html\n?/g, '').replace(/```\n?/g, '').trim();
+    
+    // Update the lesson content in the database so it persists
+    lesson.content = generatedContent;
+    await lesson.save();
+
+    res.json({ content: generatedContent });
+  } catch (error) {
+    console.error('Error generating notes:', error);
+    res.status(500).json({ message: 'Server Error generating notes.' });
+  }
+});
+
+// POST /api/learning-path/:pathId/modules/:moduleId/lessons/:lessonId/generate-quiz
+// Generate a 10-question quiz for the lesson to pass before completion
+router.post('/:pathId/modules/:moduleId/lessons/:lessonId/generate-quiz', protect, async (req, res) => {
+  try {
+    const { lessonId } = req.params;
+    
+    const lesson = await Lesson.findById(lessonId);
+    if (!lesson) {
+      return res.status(404).json({ message: 'Lesson not found' });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ message: 'AI API Key is missing. Cannot generate quiz.' });
+    }
+
+    const { GoogleGenAI } = require('@google/genai');
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    
+    const plainTextContent = lesson.content ? lesson.content.replace(/<[^>]*>?/gm, '') : lesson.title;
+
+    const prompt = `
+Generate exactly 10 multiple-choice questions based on the following lesson content.
+
+Lesson Title: "${lesson.title}"
+Lesson Content: "${plainTextContent.substring(0, 3000)}"
+
+Return ONLY valid JSON. Do not include Markdown, Code blocks, or extra text.
+The result must be a JSON array of exactly 10 questions.
+
+Each question must have exactly these properties:
+{
+  "text": "Question text",
+  "options": [
+    "Option 1",
+    "Option 2",
+    "Option 3",
+    "Option 4"
+  ],
+  "correctAnswer": "Correct option",
+  "explanation": "Brief explanation"
+}
+
+Rules:
+1. Generate exactly 10 questions.
+2. Every question must have exactly 4 options.
+3. correctAnswer must exactly match one item from options.
+`;
+
+    const response = await ai.models.generateContent({
+        model: 'gemini-3.6-flash',
+        contents: prompt
+    });
+
+    const jsonString = response.text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const questions = JSON.parse(jsonString);
+
+    if (!Array.isArray(questions)) {
+      return res.status(500).json({ message: 'AI returned an invalid quiz format.' });
+    }
+
+    res.json({ questions });
+  } catch (error) {
+    console.error('Error generating quiz:', error);
+    res.status(500).json({ message: 'Server Error generating quiz.' });
+  }
+});
+
 module.exports = router;

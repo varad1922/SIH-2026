@@ -20,8 +20,13 @@ const ProtectedRoute = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-bg-main">
-        <div className="w-10 h-10 border-4 border-border-main border-t-secondary-600 rounded-full animate-spin" />
+      <div className="min-h-screen flex flex-col items-center justify-center bg-bg-main relative overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary-100 rounded-full blur-3xl opacity-50 animate-pulse" />
+        <div className="relative z-10 flex flex-col items-center">
+          <div className="w-16 h-16 border-4 border-primary-100 border-t-primary-600 rounded-full animate-spin shadow-lg" />
+          <h2 className="mt-6 text-lg font-bold text-text-main tracking-widest uppercase animate-pulse">Skill Intel</h2>
+          <p className="text-sm font-medium text-text-secondary mt-1">Preparing your workspace...</p>
+        </div>
       </div>
     );
   }

@@ -130,8 +130,9 @@ const Assessment = () => {
     try {
       await api.post('/quizzes/attempt', {
         topic: selectedTopic.topic,
-        score: s,
+        score: Math.round((s / questions.length) * 100),
         totalQuestions: questions.length,
+        correctAnswers: s
       });
     } catch (err) {
       console.error('Failed to save quiz attempt', err);
@@ -164,36 +165,36 @@ const Assessment = () => {
             
             <div className="relative w-full md:w-96">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-primary-300" />
+                <Search className="h-5 w-5 text-secondary-400" />
               </div>
               <input
                 type="text"
                 placeholder="Search assessments..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-3 py-3 border border-primary-200 rounded-xl leading-5 bg-card-bg text-text-main placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all shadow-sm"
+                className="block w-full pl-10 pr-3 py-3 border border-border-main rounded-xl leading-5 bg-card-bg text-text-main placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all shadow-sm"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredTests.map((test) => (
-              <div key={test.id} className="bg-card-bg p-6 rounded-3xl shadow-sm border border-primary-100 flex flex-col h-full hover:shadow-md transition-shadow">
+              <div key={test.id} className="bg-card-bg p-6 rounded-3xl shadow-sm border border-border-main flex flex-col h-full hover:shadow-md transition-shadow hover:border-primary-300">
                 <div className="flex-grow">
                   <h3 className="text-xl font-bold text-text-main mb-2">{test.topic}</h3>
                   <p className="text-text-secondary text-sm mb-6">{test.desc}</p>
                   
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div>
-                      <span className="block text-xs font-bold text-primary-400 uppercase tracking-wider mb-1">Difficulty</span>
+                      <span className="block text-xs font-bold text-secondary-500 uppercase tracking-wider mb-1">Difficulty</span>
                       <span className="text-sm font-semibold text-text-main">{test.difficulty}</span>
                     </div>
                     <div>
-                      <span className="block text-xs font-bold text-primary-400 uppercase tracking-wider mb-1">Questions</span>
+                      <span className="block text-xs font-bold text-secondary-500 uppercase tracking-wider mb-1">Questions</span>
                       <span className="text-sm font-semibold text-text-main flex items-center"><List className="w-4 h-4 mr-1"/> {test.qCount}</span>
                     </div>
                     <div className="col-span-2">
-                      <span className="block text-xs font-bold text-primary-400 uppercase tracking-wider mb-1">Estimated Time</span>
+                      <span className="block text-xs font-bold text-secondary-500 uppercase tracking-wider mb-1">Estimated Time</span>
                       <span className="text-sm font-semibold text-text-main flex items-center"><Clock className="w-4 h-4 mr-1"/> {test.duration}</span>
                     </div>
                   </div>
@@ -214,8 +215,8 @@ const Assessment = () => {
             ))}
           </div>
           {filteredTests.length === 0 && (
-            <div className="text-center py-20">
-              <Target className="w-16 h-16 text-primary-200 mx-auto mb-4" />
+            <div className="text-center py-20 bg-card-bg border border-border-main rounded-3xl">
+              <Target className="w-16 h-16 text-secondary-300 mx-auto mb-4" />
               <h3 className="text-xl font-bold text-text-main mb-2">No assessments found</h3>
               <p className="text-text-secondary">Try adjusting your search criteria.</p>
             </div>
@@ -225,7 +226,7 @@ const Assessment = () => {
 
       {/* 2. ACTIVE QUIZ VIEW */}
       {viewMode === 'quiz' && questions && (
-        <div className="bg-card-bg min-h-screen md:min-h-0 md:rounded-3xl shadow-lg border border-primary-100 flex flex-col p-6 md:p-12 h-full justify-center animate-in fade-in zoom-in-95 duration-300">
+        <div className="bg-card-bg min-h-screen md:min-h-0 md:rounded-3xl shadow-lg border border-border-main flex flex-col p-6 md:p-12 h-full justify-center animate-in fade-in zoom-in-95 duration-300">
           <div className="max-w-4xl mx-auto w-full">
             
             <div className="mb-8">
@@ -234,8 +235,8 @@ const Assessment = () => {
                 <span className="text-sm font-bold text-primary-600 uppercase tracking-widest">Question {currentQ + 1} of {questions.length}</span>
                 <span className="text-sm font-bold text-text-secondary">{Math.round(((currentQ) / questions.length) * 100)}%</span>
               </div>
-              <div className="w-full bg-primary-100 rounded-full h-2">
-                <div className="bg-accent-500 h-2 rounded-full transition-all duration-300" style={{ width: `${((currentQ) / questions.length) * 100}%` }}></div>
+              <div className="w-full bg-primary-100 rounded-full h-2 overflow-hidden">
+                <div className="bg-primary-600 h-2 rounded-full transition-all duration-300" style={{ width: `${((currentQ) / questions.length) * 100}%` }}></div>
               </div>
             </div>
             
@@ -248,12 +249,12 @@ const Assessment = () => {
                   onClick={() => handleSelect(opt)}
                   className={`w-full text-left p-5 rounded-2xl border-2 transition-all duration-200 ${
                     answers[currentQ] === opt 
-                      ? 'border-primary-600 bg-primary-50 shadow-md' 
-                      : 'border-primary-100 hover:border-primary-300 hover:bg-white bg-card-bg'
+                      ? 'border-primary-600 bg-primary-50 shadow-sm' 
+                      : 'border-border-main hover:border-primary-300 hover:bg-card-alt bg-card-bg'
                   }`}
                 >
                   <div className="flex items-center space-x-4">
-                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${answers[currentQ] === opt ? 'border-primary-600' : 'border-primary-300'}`}>
+                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${answers[currentQ] === opt ? 'border-primary-600' : 'border-secondary-300'}`}>
                       {answers[currentQ] === opt && <div className="w-3 h-3 bg-primary-600 rounded-full" />}
                     </div>
                     <span className="text-lg text-text-main font-medium">{opt}</span>
@@ -262,9 +263,9 @@ const Assessment = () => {
               ))}
             </div>
 
-            <div className="flex justify-between items-center pt-6 border-t border-primary-100">
+            <div className="flex justify-between items-center pt-6 border-t border-border-main">
               {currentQ > 0 ? (
-                <button onClick={() => setCurrentQ(prev => prev - 1)} className="px-6 py-3 rounded-xl font-bold text-primary-600 hover:bg-primary-50 transition-colors border border-primary-200">
+                <button onClick={() => setCurrentQ(prev => prev - 1)} className="px-6 py-3 rounded-xl font-bold text-text-secondary hover:text-text-main hover:bg-card-alt transition-colors border border-border-main">
                   Previous
                 </button>
               ) : <div></div>}
@@ -273,7 +274,7 @@ const Assessment = () => {
                 <button 
                   onClick={() => setCurrentQ(prev => prev + 1)} 
                   disabled={!answers[currentQ]}
-                  className="px-8 py-3 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-md flex items-center"
+                  className="px-8 py-3 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm flex items-center"
                 >
                   Next <ArrowRight className="w-4 h-4 ml-2" />
                 </button>
@@ -281,7 +282,7 @@ const Assessment = () => {
                 <button 
                   onClick={() => submitQuiz(false)}
                   disabled={Object.keys(answers).length !== questions.length}
-                  className="px-8 py-3 rounded-xl font-bold bg-success-600 text-white hover:bg-success-700 disabled:opacity-50 transition-colors shadow-md shadow-success-600/20"
+                  className="px-8 py-3 rounded-xl font-bold bg-success-600 text-white hover:bg-success-700 disabled:opacity-50 transition-colors shadow-sm"
                 >
                   Submit Assessment
                 </button>
@@ -293,11 +294,11 @@ const Assessment = () => {
 
       {/* 3. RESULTS VIEW */}
       {viewMode === 'results' && score !== null && (
-        <div className="bg-card-bg p-8 md:p-12 rounded-3xl shadow-sm border border-primary-100 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-card-bg p-8 md:p-12 rounded-3xl shadow-sm border border-border-main text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
           
           {autoSubmitted && (
-             <div className="mb-8 p-4 bg-red-50 text-red-800 rounded-2xl font-bold flex items-center justify-center max-w-2xl mx-auto border border-red-200 text-sm md:text-base text-left">
-               <AlertTriangle className="w-8 h-8 mr-3 flex-shrink-0 text-red-600" />
+             <div className="mb-8 p-4 bg-error-50 text-error-700 rounded-2xl font-bold flex items-center justify-center max-w-2xl mx-auto border border-error-200 text-sm md:text-base text-left">
+               <AlertTriangle className="w-8 h-8 mr-3 flex-shrink-0 text-error-600" />
                {autoSubmitReason}
              </div>
           )}
@@ -306,21 +307,21 @@ const Assessment = () => {
           <h1 className="text-4xl font-black text-text-main mb-10">{selectedTopic?.topic}</h1>
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-12">
-             <div className="bg-white p-6 rounded-2xl border border-primary-100 shadow-sm">
+             <div className="bg-card-alt p-6 rounded-2xl border border-border-main shadow-sm">
                 <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">Final Score</p>
                 <p className="text-3xl font-black text-primary-600">{score} <span className="text-lg text-text-secondary">/ {questions.length}</span></p>
              </div>
-             <div className="bg-white p-6 rounded-2xl border border-primary-100 shadow-sm">
+             <div className="bg-card-alt p-6 rounded-2xl border border-border-main shadow-sm">
                 <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">Percentage</p>
                 <p className="text-3xl font-black text-accent-600">{percentage}%</p>
              </div>
-             <div className="bg-white p-6 rounded-2xl border border-primary-100 shadow-sm">
+             <div className="bg-card-alt p-6 rounded-2xl border border-border-main shadow-sm">
                 <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">Correct</p>
                 <p className="text-3xl font-black text-success-600">{score}</p>
              </div>
-             <div className="bg-white p-6 rounded-2xl border border-primary-100 shadow-sm">
+             <div className="bg-card-alt p-6 rounded-2xl border border-border-main shadow-sm">
                 <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-1">Incorrect</p>
-                <p className="text-3xl font-black text-red-500">{questions.length - score}</p>
+                <p className="text-3xl font-black text-error-500">{questions.length - score}</p>
              </div>
           </div>
 
@@ -332,19 +333,19 @@ const Assessment = () => {
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
              <button 
                 onClick={() => setViewMode('review')}
-                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold bg-white text-primary-700 border-2 border-primary-200 hover:bg-primary-50 transition-colors flex items-center justify-center"
+                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold bg-card-bg text-primary-700 border-2 border-primary-200 hover:bg-primary-50 transition-colors flex items-center justify-center"
              >
                 <Eye className="w-5 h-5 mr-2" /> Review Answers
              </button>
              <button 
                 onClick={() => startQuiz(selectedTopic)}
-                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold bg-accent-500 text-white border-2 border-accent-500 hover:bg-accent-600 hover:border-accent-600 transition-colors flex items-center justify-center shadow-md"
+                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold bg-accent-600 text-white border-2 border-accent-600 hover:bg-accent-700 hover:border-accent-700 transition-colors flex items-center justify-center shadow-md"
              >
                 <RefreshCw className="w-5 h-5 mr-2" /> Retake Assessment
              </button>
              <button 
                 onClick={() => { setViewMode('list'); setQuestions(null); setScore(null); }}
-                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition-colors flex items-center justify-center shadow-md"
+                className="w-full sm:w-auto px-8 py-3 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition-colors flex items-center justify-center shadow-sm"
              >
                 Back to Assessments
              </button>
@@ -354,15 +355,15 @@ const Assessment = () => {
 
       {/* 4. REVIEW VIEW */}
       {viewMode === 'review' && questions && (
-        <div className="bg-card-bg p-8 md:p-12 rounded-3xl shadow-sm border border-primary-100 max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
-           <div className="flex justify-between items-center mb-8 border-b border-primary-100 pb-6">
+        <div className="bg-card-bg p-8 md:p-12 rounded-3xl shadow-sm border border-border-main max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+           <div className="flex justify-between items-center mb-8 border-b border-border-main pb-6">
               <div>
                  <h2 className="text-2xl font-black text-text-main">Review Answers</h2>
                  <p className="text-text-secondary">{selectedTopic?.topic}</p>
               </div>
               <button 
                 onClick={() => setViewMode('results')}
-                className="px-6 py-2 rounded-xl font-bold bg-primary-100 text-primary-700 hover:bg-primary-200 transition-colors flex items-center"
+                className="px-6 py-2 rounded-xl font-bold bg-primary-50 text-primary-700 hover:bg-primary-100 transition-colors flex items-center border border-primary-100"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Results
               </button>
@@ -373,29 +374,29 @@ const Assessment = () => {
               const isCorrect = answers[idx] === q.correctAnswer;
               const hasAnswered = answers[idx] !== undefined;
               return (
-                <div key={idx} className={`p-6 md:p-8 rounded-2xl border ${isCorrect ? 'bg-success-50/30 border-success-200' : 'bg-red-50/30 border-red-200'}`}>
+                <div key={idx} className={`p-6 md:p-8 rounded-2xl border ${isCorrect ? 'bg-success-50/50 border-success-200' : 'bg-error-50/50 border-error-200'}`}>
                   <div className="flex items-start space-x-4">
-                    {isCorrect ? <CheckCircle className="w-8 h-8 text-success-500 mt-1 flex-shrink-0" /> : <XCircle className="w-8 h-8 text-red-500 mt-1 flex-shrink-0" />}
+                    {isCorrect ? <CheckCircle className="w-8 h-8 text-success-600 mt-1 flex-shrink-0" /> : <XCircle className="w-8 h-8 text-error-500 mt-1 flex-shrink-0" />}
                     <div className="flex-1">
                       <span className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 block">Question {idx + 1}</span>
                       <h3 className="text-lg font-bold text-text-main mb-4 leading-relaxed">{q.text}</h3>
                       
-                      <div className="bg-white p-4 rounded-xl border border-primary-100 mb-4 shadow-sm">
+                      <div className="bg-card-bg p-4 rounded-xl border border-border-main mb-4 shadow-sm">
                          <p className="text-sm text-text-secondary mb-1">Your answer:</p>
-                         <p className={`font-semibold text-lg ${isCorrect ? 'text-success-700' : 'text-red-700 ' + (hasAnswered ? 'line-through opacity-70' : '')}`}>
+                         <p className={`font-semibold text-lg ${isCorrect ? 'text-success-700' : 'text-error-700 ' + (hasAnswered ? 'line-through opacity-70' : '')}`}>
                             {hasAnswered ? answers[idx] : 'Not Answered'}
                          </p>
                       </div>
 
                       {!isCorrect && (
-                         <div className="bg-success-50 p-4 rounded-xl border border-success-100 mb-4 shadow-sm">
+                         <div className="bg-success-50 p-4 rounded-xl border border-success-200 mb-4 shadow-sm">
                             <p className="text-sm text-success-800 mb-1 opacity-80">Correct answer:</p>
                             <p className="font-semibold text-lg text-success-700">{q.correctAnswer}</p>
                          </div>
                       )}
                       
-                      <div className="mt-4 flex items-start space-x-2 text-sm text-text-main bg-primary-50 p-4 rounded-xl border border-primary-100">
-                         <div className="font-bold text-primary-700 min-w-max">Explanation:</div>
+                      <div className="mt-4 flex items-start space-x-2 text-sm text-text-main bg-card-bg p-4 rounded-xl border border-border-main shadow-sm">
+                         <div className="font-bold text-text-main min-w-max">Explanation:</div>
                          <div className="text-text-secondary">{q.explanation}</div>
                       </div>
                     </div>
@@ -408,7 +409,7 @@ const Assessment = () => {
           <div className="mt-10 flex justify-center">
              <button 
                 onClick={() => setViewMode('results')}
-                className="px-8 py-3 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition-colors shadow-md"
+                className="px-8 py-3 rounded-xl font-bold bg-primary-600 text-white hover:bg-primary-700 transition-colors shadow-sm"
               >
                 Done Reviewing
               </button>

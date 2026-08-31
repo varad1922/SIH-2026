@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { GoogleLogin } from '@react-oauth/google';
 import { AuthContext } from '../context/AuthContext';
-import { User, Mail, Lock, Building, Briefcase } from 'lucide-react';
+import { User, Mail, Lock, Building, Briefcase, AlertCircle } from 'lucide-react';
 
 const Register = () => {
   const [formData, setFormData] = useState({

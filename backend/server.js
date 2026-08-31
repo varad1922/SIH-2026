@@ -2,6 +2,9 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
 // Load env vars
 dotenv.config();
@@ -20,8 +23,25 @@ require('./models/Quiz');
 const app = express();
 
 // Middleware
+app.use(helmet());
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else {
+  app.use(morgan('combined'));
+}
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
+
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? (process.env.FRONTEND_URL || 'http://localhost:5173') 
+    : '*',
+}));
 
 // Mount routers
 app.use('/api/auth', require('./routes/auth'));
@@ -35,13 +55,24 @@ app.get('/', (req, res) => {
   res.send('API is running...');
 });
 
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    message: err.message || 'Server Error',
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack,
+  });
+});
+
 const http = require('http');
 const { Server } = require('socket.io');
 
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' 
+      ? (process.env.FRONTEND_URL || 'http://localhost:5173') 
+      : '*',
   }
 });
 
